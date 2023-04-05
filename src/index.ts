@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import {Command} from 'commander';
 import getApiKey from './getApiKey';
 import inquirer from 'inquirer';
