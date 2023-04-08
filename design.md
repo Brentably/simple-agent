@@ -1,0 +1,3 @@
+- chatgpt interface
+- command: specify file, prompt
+      - rewrite file

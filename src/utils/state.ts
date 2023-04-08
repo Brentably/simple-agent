@@ -17,6 +17,6 @@ export function readApiKey(): string | undefined {
 }
 
 export function writeApiKey(apiKey: string): void {
-  const dataToWrite = `API_KEY=${apiKey}`;
+  const dataToWrite = `OPENAI_KEY=${apiKey}`;
   fs.writeFileSync(configFilePath, dataToWrite);
 }
