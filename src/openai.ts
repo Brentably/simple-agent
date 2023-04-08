@@ -1,4 +1,4 @@
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
+import { ChatCompletionRequestMessage, Configuration, OpenAIApi, ChatCompletionRequestMessageRoleEnum } from "openai";
 import {readApiKey, readStore, writeStore} from "./state"
 
 const PRICING_RATE:{[key:string]:any} = {
@@ -36,3 +36,24 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
 
   return completion.data.choices[0].message.content
 }
+
+
+// calls openai, stores the message history in store.json
+export async function getChatCompletionStandalone(message: string, model = "gpt-3.5-turbo") {
+  const openai = getOpenAI()
+  const messages = [{role: ChatCompletionRequestMessageRoleEnum.User, content: message}];
+  const completion = await openai.createChatCompletion({
+    model: model,
+    messages: messages
+  });
+
+  if(!completion.data.choices[0].message) throw new Error("something fucked up")
+
+  return completion.data.choices[0].message.content
+}
+
+// async function test() {
+//   console.log(await getChatCompletion('Hello'))
+//   console.log(readStore())
+// }
+// test()
