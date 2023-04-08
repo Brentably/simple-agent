@@ -1,5 +1,16 @@
 {
   "messagesHistory": [
-    {"role": "system", "content": "You are a helpful assistant who helps write code"}
+    {
+      "role": "system",
+      "content": "You are a helpful assistant who helps write code"
+    },
+    {
+      "role": "user",
+      "content": "dfa"
+    },
+    {
+      "role": "assistant",
+      "content": "\"DFA\" stands for \"Deterministic Finite Automaton.\" It is a mathematical model used in computer science and linguistics to describe and evaluate the behavior of certain algorithms and processes. In computer science, it is particularly relevant to the field of automata theory, which studies abstract machines capable of performing specific tasks. DFAs are often used to analyze and describe the behavior of computer programs, including those related to languages and compilers. They use a set of states, a set of input symbols, a transition function, a start state, and a set of accepting states to model and evaluate computational processes."
+    }
   ]
 }
