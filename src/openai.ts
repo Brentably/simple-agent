@@ -1,7 +1,16 @@
 import { Configuration, OpenAIApi } from "openai";
 import {readApiKey, readStore} from "./state"
 
+const PRICING_RATE:{[key:string]:any} = {
+  "gpt-3.5-turbo": {"prompt": 0.002, "completion": 0.002},
+  "gpt-4": {"prompt": 0.03, "completion": 0.06},
+  "gpt-4-32k": {"prompt": 0.06, "completion": 0.12},
+}
 
+function calculateExpense(prompt_tokens: number, completion_tokens: number, model: string) {
+  const {prompt: prompt_pricing, completion: completion_pricing} = PRICING_RATE[model]
+  return ((prompt_tokens / 1000) * prompt_pricing) + ((completion_tokens / 1000) * completion_pricing)
+}
 //helper
 function getOpenAI() {
   const configuration = new Configuration({
