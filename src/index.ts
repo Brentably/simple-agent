@@ -4,9 +4,9 @@ import getApiKey from './getApiKey'
 import writeFileWithPrompt from './writeToFileWithPrompt'
 import inquirer from 'inquirer'
 import {print} from './state';
-import { getChatCompletion } from './openai';
-
+import chat, { getUserInput } from './chat';
 const program = new Command()
+
 
 program.version('0.0.1').description('My CLI tool')
 
@@ -15,13 +15,9 @@ program.action(async () => {
   await getApiKey()
 })
 
-// program
-//   .command('chat')
-//   .action(async () => {
-//     console.log('hello')
-//     console.log(await getChatCompletion('hello'))
-    
-//   })
+program
+  .command('chat')
+  .action(chat)
 
 // openai call says unauthorized 401
 
