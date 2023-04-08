@@ -20,6 +20,7 @@ function getOpenAI() {
   return new OpenAIApi(configuration);
 }
 
+// calls openai, stores the message history in store.json
 export async function getChatCompletion(message: string, model = "gpt-3.5-turbo") {
   const openai = getOpenAI()
   const messages:ChatCompletionRequestMessage[] = readStore().messagesHistory
@@ -28,7 +29,7 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
     model: model,
     messages: messages,
   });
-  
+
   if(!completion.data.choices[0].message) throw new Error("something fucked up")
   messages.push(completion.data.choices[0].message)
   writeStore((ps) => ({...ps, messagesHistory: messages}));
@@ -37,7 +38,7 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
 }
 
 async function test() {
-  console.log(await getChatCompletion(''))
+  console.log(await getChatCompletion('Hello'))
   console.log(readStore())
 }
 test()
