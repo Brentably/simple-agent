@@ -1,5 +1,5 @@
-import { Configuration, OpenAIApi } from "openai";
-import {readApiKey, readStore} from "./state"
+import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
+import {readApiKey, readStore, writeStore} from "./state"
 
 const PRICING_RATE:{[key:string]:any} = {
   "gpt-3.5-turbo": {"prompt": 0.002, "completion": 0.002},
@@ -20,18 +20,24 @@ function getOpenAI() {
   return new OpenAIApi(configuration);
 }
 
-export async function getChatCompletion(message: string) {
+export async function getChatCompletion(message: string, model = "gpt-3.5-turbo") {
   const openai = getOpenAI()
+  const messages:ChatCompletionRequestMessage[] = readStore().messagesHistory
+  messages.push({role: "user", content: message})
   const completion = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [{role: "user", content: message}],
+    model: model,
+    messages: messages,
   });
+  
+  if(!completion.data.choices[0].message) throw new Error("something fucked up")
+  messages.push(completion.data.choices[0].message)
+  writeStore((ps) => ({...ps, messagesHistory: messages}));
 
-  return completion.data.choices[0].message?.content
+  return completion.data.choices[0].message.content
 }
 
 async function test() {
-  console.log(await getChatCompletion('Im trying to build a next.js project. Please give me an example starter'))
+  console.log(await getChatCompletion(''))
   console.log(readStore())
 }
 test()

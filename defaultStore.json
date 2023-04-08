@@ -1,0 +1,5 @@
+{
+  "messagesHistory": [
+    {"role": "system", "content": "You are a helpful assistant who helps write code"}
+  ]
+}

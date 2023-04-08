@@ -1,11 +1,16 @@
 import fs from "fs";
+import { ChatCompletionRequestMessage } from "openai";
 import path from "path";
+
 
 interface Config {
   apiKey: string;
 }
 
-type Store = any;
+type Store = {
+  messagesHistory: ChatCompletionRequestMessage[]
+  [key:string]:any;
+};
 
 const configFilePath = path.resolve(__dirname, "../../.env");
 
@@ -25,22 +30,21 @@ export function writeApiKey(apiKey: string): void {
 }
 
 
-export function readStore(): Store | null {
-  try {
+export function readStore(): Store {
     // Read and parse the contents of store.json file
-    const rawData = fs.readFileSync("../store.json");
+    const rawData = fs.readFileSync("./store.json");
     const data = JSON.parse(rawData.toString()) as Store;
     return data;
-  } catch (err) {
-    console.log("Error reading store.json file:", err);
-    return null;
-  }
 }
 
-export function writeStore(data: Store) {
+
+// to write to store, you pass in an update function which takes in the value of the previous store and returns what you want the new store to be.
+export function writeStore(update: (prevStore: Store) => Store) {
   try {
+    const prevStore = readStore()
+    const newStore = update(prevStore)
     // Convert the data object to JSON and write to store.json file
-    const jsonData = JSON.stringify(data, null, 2);
+    const jsonData = JSON.stringify(newStore, null, 2);
     fs.writeFileSync("../store.json", jsonData);
     console.log("store.json file updated successfully");
   } catch (err) {
