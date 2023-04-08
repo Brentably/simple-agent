@@ -38,11 +38,10 @@ export function readStore(): Store {
 }
 
 
-// to write to store, you pass in an update function which takes in the value of the previous store and returns what you want the new store to be.
-export function writeStore(update: (prevStore: Store) => Store) {
+// to write to store, you pass in an update function which takes in the value of the previous store and returns what you want the new store to be. OR you can pass in the new store
+export function writeStore(update: (prevStore: Store) => Store | Store) {
   try {
-    const prevStore = readStore()
-    const newStore = update(prevStore)
+    const newStore = (typeof update === "function") ? update(readStore()) : update
     // Convert the data object to JSON and write to store.json file
     const jsonData = JSON.stringify(newStore, null, 2);
     fs.writeFileSync("../store.json", jsonData);
