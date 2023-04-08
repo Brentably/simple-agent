@@ -12,7 +12,7 @@ type Store = {
   [key:string]:any;
 };
 
-const configFilePath = path.resolve(__dirname, "../../.env");
+const configFilePath = path.resolve(__dirname, "../.env");
 
 export function readApiKey(): string | undefined {
   if (!fs.existsSync(configFilePath)) {
@@ -21,6 +21,7 @@ export function readApiKey(): string | undefined {
 
   const rawData = fs.readFileSync(configFilePath, "utf8");
   const match = /OPENAI_KEY=(.*)/.exec(rawData);
+  console.log(match)
   return match ? match[1] : undefined;
 }
 
