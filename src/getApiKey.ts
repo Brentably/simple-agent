@@ -1,5 +1,5 @@
 import inquirer from 'inquirer'
-import { readApiKey, writeApiKey } from './utils/state';
+import { readApiKey, writeApiKey } from './state';
 
 
 export default async function getApiKey() {
@@ -15,4 +15,6 @@ export default async function getApiKey() {
   writeApiKey(answers.apiKey)
   console.log('success')
   console.log(readApiKey())
+
+
 }

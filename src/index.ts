@@ -1,54 +1,43 @@
 #!/usr/bin/env node
 import { Command } from 'commander'
 import getApiKey from './getApiKey'
+import writeFileWithPrompt from './writeToFileWithPrompt'
 import inquirer from 'inquirer'
-
+import {print} from './state';
+import { getChatCompletion } from './openai';
 
 const program = new Command()
 
 program.version('0.0.1').description('My CLI tool')
 
+// Checks for OpenAI key and prompts user if it's not in the .env
 program.action(async () => {
-  // Prompt the user for input using inquirer
-  // if(!process.env.OPENAI_KEY) await getApiKey()
-  console.log('f*ck mayne')
   await getApiKey()
 })
 
+program
+  .command('chat')
+  .action(async () => {
+    console.log('hello')
+    console.log(await getChatCompletion('hello'))
+    
+  })
+
+// openai call says unauthorized 401
 
 
 program
-  .command('run')
-  .description('Runs the CLI command.')
+  .command('write')
+  .requiredOption('-f, --file-path <filepath>', 'file path')
+  .requiredOption('-p, --prompt <prompt>', 'prompt')
   .action(async () => {
-    const { api_key, file_name } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'api_key',
-        message: 'Enter your API key:',
-      },
-      {
-        type: 'input',
-        name: 'file_name',
-        message: 'Enter the file name:',
-      },
-    ])
+    const { filePath, prompt } = program.opts();
 
-    const { prompt } = await inquirer.prompt({
-      type: 'input',
-      name: 'prompt',
-      message: 'Enter a prompt:',
-    })
-
-    console.log(`API key: ${api_key}`)
-    console.log(`File name: ${file_name}`)
-    console.log(`Prompt: ${prompt}`)
-
-    // Do something with the API key and file name, like make an API call
-    // and write the response to the specified file.
-    // For example:
-    // const response = await makeApiCall(api_key, prompt);
-    // fs.writeFileSync(file_name, response);
-  })
+    print(filePath);
+    
+    // Do something with the file path and prompt
+    // const res = await writeFileWithPrompt(filePath, prompt);
+    // print(res);
+  });
 
 program.parse(process.argv)
