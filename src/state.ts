@@ -50,6 +50,11 @@ export function writeStore(update: (prevStore: Store) => Store | Store) {
   }
 }
 
+export function clearChat() {
+  writeStore(ps => ({...ps, messagesHistory: [{"role": "system", "content": "You are a helpful assistant who helps write code"}]}))
+  console.log('message history cleared')
+}
+
 
 export function print(a: any) {
   console.log(a);

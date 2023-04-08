@@ -3,7 +3,7 @@ import { Command } from 'commander'
 import getApiKey from './getApiKey'
 import writeFileWithPrompt from './writeToFileWithPrompt'
 import inquirer from 'inquirer'
-import {print} from './state';
+import {clearChat, print} from './state';
 import chat, { getUserInput } from './chat';
 const program = new Command()
 
@@ -17,9 +17,12 @@ program.action(async () => {
 
 program
   .command('chat')
-  .action(chat)
+  .argument('[clear]')
+  .action((args) => {
+    if(args === "clear") clearChat()
+    else chat()
+  })
 
-// openai call says unauthorized 401
 
 
 program

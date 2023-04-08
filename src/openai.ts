@@ -32,8 +32,10 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
 
   if(!completion.data.choices[0].message) throw new Error("something fucked up")
   messages.push(completion.data.choices[0].message)
+  const {prompt_tokens, completion_tokens} = completion.data.usage!
+  const expense = calculateExpense(prompt_tokens, completion_tokens, model)
+  console.log(expense)
   writeStore((ps) => ({...ps, messagesHistory: messages}));
-
   return completion.data.choices[0].message.content
 }
 
