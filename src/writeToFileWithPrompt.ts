@@ -12,12 +12,12 @@ function readFile(filePath: String) {
   }
 }
 
-export default async function writeFileWithPrompt(filePath: String, prompt: String) {
+export default async function writeFileWithPrompt(filePath: String, prompt: String, isCreate: Boolean = false) {
   print(`file path: ${filePath}\nprompt: ${prompt}`);
   const fileContent = readFile(filePath);
   const res = await getChatCompletionStandalone(
 `
-Your job is to take a file and a prompt, and spit out what the file should look like given the prompt. Just respond with what the whole file's new content should look like, in one blob denotated by backticks. Make sure you write runnable code.
+Your job is to ${isCreate ? 'create a file using' : 'take a file and'} a prompt, and spit out what the file should look like given the prompt. Just respond with what the whole file's new content should look like, in one blob denotated by backticks. Make sure you write runnable code.
 
 file name: "${filePath}"
 

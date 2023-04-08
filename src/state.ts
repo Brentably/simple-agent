@@ -12,17 +12,17 @@ type Store = {
   [key:string]:any;
 };
 
-const configFilePath = path.resolve(__dirname, "../../.env");
+const configFilePath = path.resolve(__dirname, "../.env");
 
 export function readApiKey(): string | undefined {
-  return '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';
-  // if (!fs.existsSync(configFilePath)) {
-  //   return undefined;
-  // }
+  if (!fs.existsSync(configFilePath)) {
+    return undefined;
+  }
 
-  // const rawData = fs.readFileSync(configFilePath, "utf8");
-  // const match = /OPENAI_KEY=(.*)/.exec(rawData);
-  // return match ? match[1] : undefined;
+  const rawData = fs.readFileSync(configFilePath, "utf8");
+  const match = /OPENAI_KEY=(.*)/.exec(rawData);
+
+  return match ? match[1] : undefined;
 }
 
 export function writeApiKey(apiKey: string): void {

@@ -33,7 +33,18 @@ program
   .action(async ({ filePath, prompt }) => {
     
     // Do something with the file path and prompt
-    const res = await writeFileWithPrompt(filePath, prompt);
+    const res = await writeFileWithPrompt(filePath, prompt, false);
+    print(res);
+  });
+
+program
+  .command('create')
+  .requiredOption('-f, --file-path <filepath>', 'file path')
+  .requiredOption('-p, --prompt <prompt>', 'prompt')
+  .action(async ({ filePath, prompt }) => {
+    
+    // Do something with the file path and prompt
+    const res = await writeFileWithPrompt(filePath, prompt, true);
     print(res);
   });
 
