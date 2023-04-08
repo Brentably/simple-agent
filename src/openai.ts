@@ -36,9 +36,3 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
 
   return completion.data.choices[0].message.content
 }
-
-async function test() {
-  console.log(await getChatCompletion('Hello'))
-  console.log(readStore())
-}
-test()

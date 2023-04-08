@@ -44,7 +44,7 @@ export function writeStore(update: (prevStore: Store) => Store | Store) {
     // Convert the data object to JSON and write to store.json file
     const jsonData = JSON.stringify(newStore, null, 2);
     fs.writeFileSync("./store.json", jsonData);
-    console.log("store.json file updated successfully");
+    // console.log("store.json file updated successfully");
   } catch (err) {
     console.log("Error writing to store.json file:", err);
   }
