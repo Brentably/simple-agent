@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { Command } from 'commander'
-import getApiKey from './getApiKey'
 import writeFileWithPrompt from './writeFromPrompt'
 import inquirer from 'inquirer'
 import { clearChat } from './state';
@@ -11,10 +10,8 @@ const program = new Command()
 program.version('0.0.1').description('My CLI tool')
 
 
-program.action(async () => {
-  await getApiKey()
-  chat()
-})
+program
+  .action(chat)
 
 program
   .command('clear')

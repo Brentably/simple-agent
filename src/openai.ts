@@ -1,6 +1,7 @@
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi, ChatCompletionRequestMessageRoleEnum } from "openai";
-import {readApiKey, readStore, writeStore} from "./state"
-import getApiKey from "./getApiKey";
+import {readApiKey, readStore, writeApiKey, writeStore} from "./state"
+import inquirer from "inquirer";
+
 
 const PRICING_RATE:{[key:string]:any} = {
   "gpt-3.5-turbo": {"prompt": 0.002, "completion": 0.002},
@@ -14,6 +15,7 @@ function calculateExpense(prompt_tokens: number, completion_tokens: number, mode
 }
 //helper
 async function getOpenAI() {
+  await getApiKey()
   const configuration = new Configuration({
       apiKey: readApiKey(),
   });
@@ -57,8 +59,44 @@ export async function getChatCompletionStandalone(message: string, model = "gpt-
   return completion.data.choices[0].message.content
 }
 
-// async function test() {
-//   console.log(await getChatCompletion('Hello'))
-//   console.log(readStore())
-// }
-// test()
+
+
+
+
+
+export default async function getApiKey() {
+  if(readApiKey()) return true;
+  //else
+    const answers = await inquirer.prompt([
+      {
+        type: "password",
+        name: "apiKey",
+        message: "Please enter your OpenAI API Key:",
+        mask: '*'
+      },
+    ]);
+
+    console.log('verifying key...')
+    const validKey = testKey(answers.apiKey)
+    if(!validKey) {
+      console.log("key is invalid. Please check key and try again")
+      return
+    }
+
+    console.log('success')
+    writeApiKey(answers.apiKey)
+
+}
+
+
+export async function testKey(key: string):Promise<boolean> {
+
+  const configuration = new Configuration({
+      apiKey: key,
+  });
+
+  const openai =  new OpenAIApi(configuration);
+
+  const resp = await openai.listModels()
+  return resp.status === 200
+}

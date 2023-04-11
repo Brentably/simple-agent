@@ -30,7 +30,7 @@ export default async function writeFileWithPrompt(filePath: string, userPrompt: 
 
 
   // if there's a codeblock, return codeblock, otherwise, wrap chatgpts response in a backtick delimiter
-  const res = await getChatCompletionStandalone(prompt).then((string) => string.match(/```([\s\S]*?)```/g) ? string : `\`\`\`\n${string}\n\`\`\`` ) 
+  const res = await getChatCompletion(prompt, "gpt-3.5-turbo", 0).then((string) => string.match(/```([\s\S]*?)```/g) ? string : `\`\`\`\n${string}\n\`\`\`` ) 
   
   console.log(`Openai res: \n${res}`);
 

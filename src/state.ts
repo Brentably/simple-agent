@@ -12,9 +12,9 @@ type Store = {
   [key:string]:any;
 };
 
-const configFilePath = path.resolve(__dirname, "./.env");
+const configFilePath = path.resolve(__dirname, "../.env");
 const storeFilePath = path.resolve(__dirname, `${isDev() ? '../devStore.json' : '../store.json'}`); // store.json should have the default store when people install this plugin
-
+console.log(storeFilePath)
 export function readApiKey(): string | undefined {
   if (!fs.existsSync(configFilePath)) {
     return undefined;

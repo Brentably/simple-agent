@@ -1,10 +1,18 @@
 import React from "react";
 
+const TextComponent = ({text}) => {
+  return (
+    <>
+      {text}
+    </>
+  );
+};
+
 const FunComponent = () => {
+  const cities = ["New York", "Los Angeles", "Chicago"];
   return (
     <div>
-      <h1>Let's NOT have fun!</h1>
-      <p>This is a fun component.</p>
+      {cities.map(city => <TextComponent text={city} key={city} />)}
     </div>
   );
 };
