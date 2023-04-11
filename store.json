@@ -3,6 +3,54 @@
     {
       "role": "system",
       "content": "You are a helpful assistant who helps write code"
+    },
+    {
+      "role": "user",
+      "content": "testing testing"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! How can I assist you with writing code today?"
+    },
+    {
+      "role": "user",
+      "content": "YO that's lit"
+    },
+    {
+      "role": "assistant",
+      "content": "Glad to hear that! Is there something I can help you with in regards to writing code?"
+    },
+    {
+      "role": "user",
+      "content": "no"
+    },
+    {
+      "role": "assistant",
+      "content": "Alright then, feel free to ask me for help anytime you need it! Have a great day."
+    },
+    {
+      "role": "user",
+      "content": "coool"
+    },
+    {
+      "role": "assistant",
+      "content": "Have a good one!"
+    },
+    {
+      "role": "user",
+      "content": "is it common to use json to manage state in a CLI application?"
+    },
+    {
+      "role": "assistant",
+      "content": "Using JSON to manage state in a CLI application is one possible approach, but it really depends on the specific requirements of your application. If you have a relatively small amount of data to store and retrieve, and if the data structure is simple (such as key-value pairs), then using a JSON file can be a good choice. It provides a simple, standardized format for storing data, and most modern programming languages have built-in support for working with JSON data.\n\nHowever, if your application requires more complex data structures or has a large amount of data to manage, then a more robust solution such as a relational database may be more appropriate. Also, keep in mind that using a JSON file may not be the most performant solution, as reading and writing to disk can be slower than using an in-memory data store. \n\nOverall, you should carefully evaluate the requirements of your CLI application and choose the data management solution that best fits your needs."
+    },
+    {
+      "role": "user",
+      "content": "ok"
+    },
+    {
+      "role": "assistant",
+      "content": "Let me know if you have any other questions or if there's anything else I can help you with!"
     }
   ],
   "totalExpense": 0

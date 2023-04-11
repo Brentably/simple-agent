@@ -1,8 +1,7 @@
-import {print} from './state';
 import { getChatCompletion, getChatCompletionStandalone } from './openai';
 import fs from 'fs';
 
-function readFile(filePath: String) {
+function readFile(filePath: string) {
   try {
     const data = fs.readFileSync(`${filePath}`, 'utf-8');
     console.log(data);
@@ -12,21 +11,26 @@ function readFile(filePath: String) {
   }
 }
 
-export default async function writeFileWithPrompt(filePath: String, prompt: String, isCreate: Boolean = false) {
-  print(`file path: ${filePath}\nprompt: ${prompt}`);
-  const fileContent = readFile(filePath);
-  const res = await getChatCompletionStandalone(
-`
-Your job is to ${isCreate ? 'create a file using' : 'take a file and'} a prompt, and spit out what the file should look like given the prompt. Just respond with what the whole file's new content should look like, in one blob denotated by backticks. Make sure you write runnable code.
 
-file name: "${filePath}"
-
-current file content: "${fileContent}"
-
-prompt: "${prompt}"
-`, 'gpt-3.5-turbo');
+export default async function writeFileWithPrompt(filePath: string, userPrompt: string) {
+  console.log(`file path: ${filePath}\n userPrompt: ${userPrompt}`);
   
-  print(`Openai res: ${res}`);
+  const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : ''
+
+  const prompt = `
+  Your job is to modify a code file given a prompt. Sometimes the file will be empty. Create the file from scratch if that is the case.
+  Respond with only the modified or created file. You do not need to explain or say anything else. Keep the file as similar as possible and only change what is asked in the prompt.
+  
+  
+  ${fileContent ? `Here is the complete file: \`\`\`\n${fileContent}\n\`\`\`` : null}
+  
+  prompt: "${userPrompt}"
+  `
+  
+
+  const res = await getChatCompletionStandalone(prompt);
+  
+  console.log(`Openai res: ${res}`);
 
   const pattern = /```(?:[a-z]+)?\n([\s\S]*?)\n```/g;
 

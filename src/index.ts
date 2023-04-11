@@ -3,7 +3,7 @@ import { Command } from 'commander'
 import getApiKey from './getApiKey'
 import writeFileWithPrompt from './writeToFileWithPrompt'
 import inquirer from 'inquirer'
-import {clearChat, print} from './state';
+import {clearChat} from './state';
 import chat, { getUserInput } from './chat';
 const program = new Command()
 
@@ -15,36 +15,23 @@ program.action(async () => {
   await getApiKey()
 })
 
-program
-  .command('chat')
-  .argument('[clear]')
-  .action((args) => {
-    if(args === "clear") clearChat()
-    else chat()
-  })
-
-
+program.action(() => {
+  chat()
+})
 
 program
-  .command('write')
-  .requiredOption('-f, --file-path <filepath>', 'file path')
-  .requiredOption('-p, --prompt <prompt>', 'prompt')
-  .action(async ({ filePath, prompt }) => {
-    
-    // Do something with the file path and prompt
-    const res = await writeFileWithPrompt(filePath, prompt, false);
-    print(res);
+  .command('clear')
+  .description('clear the chat history')
+  .action(clearChat)
+
+
+
+program
+  .command('write <filePath> <prompt>')
+  .alias('-w')
+  .description('write or modify a file given a path and prompt.')
+  .action(async ( filePath, prompt ) => {
+    const res = await writeFileWithPrompt(filePath, prompt);
+    console.log(res);
   });
 
-program
-  .command('create')
-  .requiredOption('-f, --file-path <filepath>', 'file path')
-  .requiredOption('-p, --prompt <prompt>', 'prompt')
-  .action(async ({ filePath, prompt }) => {
-    
-    // Do something with the file path and prompt
-    const res = await writeFileWithPrompt(filePath, prompt, true);
-    print(res);
-  });
-
-program.parse(process.argv)
