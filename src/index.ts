@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander'
 import getApiKey from './getApiKey'
-import writeFileWithPrompt from './writeToFileWithPrompt'
+import writeFileWithPrompt from './writeFromPrompt'
 import inquirer from 'inquirer'
 import {clearChat} from './state';
 import chat, { getUserInput } from './chat';
@@ -32,10 +32,9 @@ program
   .description('write or modify a file given a path and prompt.')
   .action(async ( filePath, promptParts ) => {
     const prompt = promptParts.join(' ')
-    const res = await writeFileWithPrompt(filePath, prompt);
-    console.log(res);
+    await writeFileWithPrompt(filePath, prompt);
   });
 
-  
+
 
 program.parseAsync(process.argv)

@@ -1,5 +1,6 @@
 import { getChatCompletion, getChatCompletionStandalone } from './openai';
 import fs from 'fs';
+import chalk from 'chalk'
 
 function readFile(filePath: string) {
   try {
@@ -13,7 +14,7 @@ function readFile(filePath: string) {
 
 
 export default async function writeFileWithPrompt(filePath: string, userPrompt: string) {
-  console.log(`file path: ${filePath}\n userPrompt: ${userPrompt}`);
+  console.log(`file path: ${chalk.green(filePath)}\n userPrompt: ${userPrompt}`);
   
   const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : ''
 
@@ -43,7 +44,7 @@ export default async function writeFileWithPrompt(filePath: string, userPrompt: 
     contentToInsert += codeBlock;
   }
 
-  fs.writeFile(`${filePath}`, contentToInsert, (err) => {
+  fs.writeFile(filePath, contentToInsert, (err) => {
     if (err) throw err;
     console.log(`Data written to ${filePath}`);
   });
