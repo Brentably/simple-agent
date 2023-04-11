@@ -1,5 +1,6 @@
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi, ChatCompletionRequestMessageRoleEnum } from "openai";
 import {readApiKey, readStore, writeStore} from "./state"
+import getApiKey from "./getApiKey";
 
 const PRICING_RATE:{[key:string]:any} = {
   "gpt-3.5-turbo": {"prompt": 0.002, "completion": 0.002},
@@ -12,7 +13,7 @@ function calculateExpense(prompt_tokens: number, completion_tokens: number, mode
   return ((prompt_tokens / 1000) * prompt_pricing) + ((completion_tokens / 1000) * completion_pricing)
 }
 //helper
-function getOpenAI() {
+async function getOpenAI() {
   const configuration = new Configuration({
       apiKey: readApiKey(),
   });
@@ -21,13 +22,14 @@ function getOpenAI() {
 }
 
 // calls openai, stores the message history in store.json
-export async function getChatCompletion(message: string, model = "gpt-3.5-turbo") {
-  const openai = getOpenAI()
+export async function getChatCompletion(message: string, model = "gpt-3.5-turbo", temperature?: number) {
+  const openai = await getOpenAI()
   const messages:ChatCompletionRequestMessage[] = readStore().messagesHistory
   messages.push({role: "user", content: message})
   const completion = await openai.createChatCompletion({
     model: model,
     messages: messages,
+    temperature
   });
 
   if(!completion.data.choices[0].message) throw new Error("something fucked up")
@@ -42,7 +44,7 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
 
 // calls openai, stores the message history in store.json
 export async function getChatCompletionStandalone(message: string, model = "gpt-3.5-turbo", temperature = 0) {
-  const openai = getOpenAI()
+  const openai = await getOpenAI()
   const messages = [{role: ChatCompletionRequestMessageRoleEnum.User, content: message}];
   const completion = await openai.createChatCompletion({
     model: model,

@@ -14,7 +14,6 @@ export default async function getApiKey() {
   ]);
   writeApiKey(answers.apiKey)
   console.log('success')
-  console.log(readApiKey())
 
 
 }
