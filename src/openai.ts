@@ -41,12 +41,13 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
 
 
 // calls openai, stores the message history in store.json
-export async function getChatCompletionStandalone(message: string, model = "gpt-3.5-turbo") {
+export async function getChatCompletionStandalone(message: string, model = "gpt-3.5-turbo", temperature = 0) {
   const openai = getOpenAI()
   const messages = [{role: ChatCompletionRequestMessageRoleEnum.User, content: message}];
   const completion = await openai.createChatCompletion({
     model: model,
-    messages: messages
+    messages: messages,
+    temperature: temperature
   });
 
   if(!completion.data.choices[0].message) throw new Error("something fucked up")
