@@ -11,7 +11,7 @@ program.version('0.0.1').description('My CLI tool')
 
 
 program
-  .action(chat)
+  .action(() => chat())
 
 program
   .command('clear')
