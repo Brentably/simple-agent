@@ -1,19 +1,12 @@
-const { v4: uuidv4 } = require('uuid');
+import React from "react";
 
-function generateUUID() {
-  return uuidv4();
-}
-
-function ligma() {
-  return Math.random() < 0.5 ? 'nuts' : 'balls';
-}
-
-function sumList(list) {
-  return list.reduce((acc, val) => acc + val, 0);
-}
-
-module.exports = {
-  generateUUID,
-  ligma,
-  sumList
+const FunComponent = () => {
+  return (
+    <div>
+      <h1>Let's have some fun!</h1>
+      <p>This is a fun component.</p>
+    </div>
+  );
 };
+
+export default FunComponent;

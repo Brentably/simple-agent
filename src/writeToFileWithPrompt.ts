@@ -26,14 +26,16 @@ export default async function writeFileWithPrompt(filePath: string, userPrompt: 
   
   prompt: "${userPrompt}"
   `
-  
 
-  const res = await getChatCompletionStandalone(prompt);
+
+  // if there's a codeblock, return codeblock, otherwise, wrap chatgpts response in a backtick delimiter
+  const res = await getChatCompletionStandalone(prompt).then((string) => string.match(/```([\s\S]*?)```/g) ? string : `\`\`\`\n${string}\n\`\`\`` ) 
   
-  console.log(`Openai res: ${res}`);
+  console.log(`Openai res: \n${res}`);
 
   const pattern = /```(?:[a-z]+)?\n([\s\S]*?)\n```/g;
-
+    // const regex = new RegExp(/```([\s\S]*?)```/g)
+  
   let contentToInsert = '';
   let match;
   while ((match = pattern.exec(res)) !== null) {
