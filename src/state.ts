@@ -13,6 +13,7 @@ type Store = {
 };
 
 const configFilePath = path.resolve(__dirname, "../.env");
+const storeFilePath = path.resolve(__dirname, '../store.json');
 
 export function readApiKey(): string | undefined {
   if (!fs.existsSync(configFilePath)) {
@@ -32,7 +33,7 @@ export function writeApiKey(apiKey: string): void {
 
 export function readStore(): Store {
     // Read and parse the contents of store.json file
-    const rawData = fs.readFileSync("./store.json");
+    const rawData = fs.readFileSync(storeFilePath);
     const data = JSON.parse(rawData.toString()) as Store;
     return data;
 }
@@ -43,7 +44,7 @@ export function writeStore(update: (prevStore: Store) => Store | Store) {
     const newStore = (typeof update === "function") ? update(readStore()) : update
     // Convert the data object to JSON and write to store.json file
     const jsonData = JSON.stringify(newStore, null, 2);
-    fs.writeFileSync("./store.json", jsonData);
+    fs.writeFileSync(storeFilePath, jsonData);
     // console.log("store.json file updated successfully");
   } catch (err) {
     console.log("Error writing to store.json file:", err);
