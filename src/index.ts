@@ -15,7 +15,7 @@ program.action(async () => {
   await getApiKey()
 })
 
-program.action(() => {
+program.action(async () => {
   chat()
 })
 
@@ -27,11 +27,15 @@ program
 
 
 program
-  .command('write <filePath> <prompt>')
+  .command('write <filePath> [prompt...]')
   .alias('-w')
   .description('write or modify a file given a path and prompt.')
-  .action(async ( filePath, prompt ) => {
+  .action(async ( filePath, promptParts ) => {
+    const prompt = promptParts.join(' ')
     const res = await writeFileWithPrompt(filePath, prompt);
     console.log(res);
   });
 
+  
+
+program.parseAsync(process.argv)

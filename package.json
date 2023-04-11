@@ -19,6 +19,7 @@
   "dependencies": {
     "commander": "^10.0.0",
     "inquirer": "^8.2.5",
-    "openai": "^3.2.1"
+    "openai": "^3.2.1",
+    "prismjs": "^1.29.0"
   }
 }
