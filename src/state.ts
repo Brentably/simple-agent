@@ -13,7 +13,7 @@ type Store = {
 };
 
 const configFilePath = path.resolve(__dirname, "../.env");
-const storeFilePath = path.resolve(__dirname, '../store.json');
+const storeFilePath = path.resolve(__dirname, `${isDev() ? '../devStore.json' : '../store.json'}`); // store.json should have the default store when people install this plugin
 
 export function readApiKey(): string | undefined {
   if (!fs.existsSync(configFilePath)) {
@@ -30,6 +30,15 @@ export function writeApiKey(apiKey: string): void {
   fs.writeFileSync(configFilePath, dataToWrite);
 }
 
+export function isDev(): boolean {
+  if (!fs.existsSync(configFilePath)) {
+    return false;
+  }
+  const rawData = fs.readFileSync(configFilePath, "utf8");
+  const match = /DEV=(.*)/.exec(rawData);
+  if(match?.[1].toLowerCase() === "true") return true
+  return false
+}
 
 export function readStore(): Store {
     // Read and parse the contents of store.json file

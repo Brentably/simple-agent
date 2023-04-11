@@ -5,3 +5,5 @@ build
 .env
 
 dist
+
+devStore.json
