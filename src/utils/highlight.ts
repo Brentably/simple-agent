@@ -23,7 +23,6 @@ const theme: { [key: string]: chalk.Chalk } = {
 }
 
 const highlight = (code: string, language: string = 'general') => {
-  console.log('highlight called')
   const tokens = Prism.tokenize(code, Prism.languages[language])
   return tokens
     .map((token) => {

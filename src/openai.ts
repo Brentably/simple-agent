@@ -11,7 +11,7 @@ const PRICING_RATE:{[key:string]:any} = {
 
 function calculateExpense(prompt_tokens: number, completion_tokens: number, model: string) {
   const {prompt: prompt_pricing, completion: completion_pricing} = PRICING_RATE[model]
-  return ((prompt_tokens / 1000) * prompt_pricing) + ((completion_tokens / 1000) * completion_pricing)
+  return parseFloat(((prompt_tokens / 1000) * prompt_pricing) + ((completion_tokens / 1000) * completion_pricing).toFixed(6))
 }
 //helper
 async function getOpenAI() {
@@ -38,8 +38,8 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
   messages.push(completion.data.choices[0].message)
   const {prompt_tokens, completion_tokens} = completion.data.usage!
   const expense = calculateExpense(prompt_tokens, completion_tokens, model)
-  console.log(expense)
-  writeStore((ps) => ({...ps, messagesHistory: messages}));
+  // the weird syntax is just necessary for rounding to 6 decimal places lol
+  writeStore((ps) => ({...ps, totalExpense:`${parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense}`, messagesHistory: messages}));
   return completion.data.choices[0].message.content
 }
 
