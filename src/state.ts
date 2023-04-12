@@ -63,10 +63,9 @@ export function writeStore(update: (prevStore: Store) => Store | Store) {
 }
 
 export function clearChat() {
-  writeStore(ps => ({...ps, messagesHistory: [{"role": "system", "content": "You are a helpful assistant who helps write code"}]}))
+  writeStore(ps => ({...ps, historyTokens: "12", messagesHistory: [{"role": "system", "content": "You are a helpful assistant who helps write code"}]}))
   console.log('message history cleared')
 }
-
 
 export const trimMessages = (number: number = 5) => {
   writeStore(ps => {
