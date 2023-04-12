@@ -5,5 +5,6 @@
       "content": "You are a helpful assistant who helps write code"
     }
   ],
-  "totalExpense": 0
+  "totalExpense": "0",
+  "historyTokens": "0"
 }

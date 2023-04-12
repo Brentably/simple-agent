@@ -1,6 +1,7 @@
 import fs from "fs";
 import { ChatCompletionRequestMessage } from "openai";
 import path from "path";
+import { calcTokens } from "./openai";
 
 
 interface Config {
@@ -9,7 +10,8 @@ interface Config {
 
 type Store = {
   messagesHistory: ChatCompletionRequestMessage[]
-  [key:string]:any;
+  historyTokens: string,
+  totalExpense: string
 };
 
 const configFilePath = path.resolve(__dirname, "../.env");
@@ -63,4 +65,23 @@ export function writeStore(update: (prevStore: Store) => Store | Store) {
 export function clearChat() {
   writeStore(ps => ({...ps, messagesHistory: [{"role": "system", "content": "You are a helpful assistant who helps write code"}]}))
   console.log('message history cleared')
+}
+
+
+export const trimMessages = (number: number = 5) => {
+  writeStore(ps => {
+    const messagesHistory = ps.messagesHistory
+    const firstMessage = messagesHistory.shift();
+    if(!firstMessage) throw new Error("tried to trim messages, but there was no first message")
+    let trimmedMsgs = '' // delete
+    for(let i = 0; i < number; i++) {
+      const trimmed = messagesHistory.shift()
+      trimmedMsgs += trimmed //delete
+    }
+
+    console.log(`${calcTokens(trimmedMsgs)} tokens trimmed`) //delete
+
+    messagesHistory.unshift(firstMessage)
+    return ({...ps, messagesHistory})
+  })
 }

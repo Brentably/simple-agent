@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi, ChatCompletionRequestMessageRoleEnum } from "openai";
-import {readApiKey, readStore, writeApiKey, writeStore} from "./state"
+import {readApiKey, readStore, trimMessages, writeApiKey, writeStore} from "./state"
 import inquirer from "inquirer";
 
 
@@ -8,6 +8,11 @@ const PRICING_RATE:{[key:string]:any} = {
   "gpt-4": {"prompt": 0.03, "completion": 0.06},
   "gpt-4-32k": {"prompt": 0.06, "completion": 0.12},
 }
+const contextLength:{[key:string]:number} = {
+  "gpt-3.5-turbo": 4097,
+  "gpt-4": 8192
+}
+
 
 function calculateExpense(prompt_tokens: number, completion_tokens: number, model: string) {
   const {prompt: prompt_pricing, completion: completion_pricing} = PRICING_RATE[model]
@@ -26,8 +31,12 @@ async function getOpenAI() {
 // calls openai, stores the message history in store.json
 export async function getChatCompletion(message: string, model = "gpt-3.5-turbo", temperature?: number) {
   const openai = await getOpenAI()
-  const messages:ChatCompletionRequestMessage[] = readStore().messagesHistory
+  const {messagesHistory: messages, historyTokens} = readStore()
   messages.push({role: "user", content: message})
+
+
+  if(parseInt(historyTokens) + calcTokens(message) > contextLength[model]) trimMessages() // keeps it within context length
+
   const completion = await openai.createChatCompletion({
     model: model,
     messages: messages,
@@ -39,7 +48,7 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
   const {prompt_tokens, completion_tokens} = completion.data.usage!
   const expense = calculateExpense(prompt_tokens, completion_tokens, model)
   // the weird syntax is just necessary for rounding to 6 decimal places lol
-  writeStore((ps) => ({...ps, totalExpense:`${parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense}`, messagesHistory: messages}));
+  writeStore((ps) => ({...ps, historyTokens: `${prompt_tokens+completion_tokens}`, totalExpense:`${parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense}`, messagesHistory: messages, }));
   return completion.data.choices[0].message.content
 }
 
@@ -100,3 +109,6 @@ export async function testKey(key: string):Promise<boolean> {
   const resp = await openai.listModels()
   return resp.status === 200
 }
+
+
+export const calcTokens = (string: string): number => Math.round(string.length / 4)
