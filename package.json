@@ -1,6 +1,6 @@
 {
   "name": "wtfdid-cli",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A CLI for chat GPT and writing code with GPT as an assistant",
   "main": "index.ts",
   "scripts": {
@@ -10,7 +10,7 @@
   "bin": {
     "wtfdid": "./build/index.js",
     "wtfhack": "./build/index.js",
-    "wtfchat": "./build/index.js"
+    "wtfchat": "./build/chatShortcut.js"
   },
   "author": "",
   "license": "ISC",

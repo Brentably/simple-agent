@@ -6,10 +6,11 @@ import { clearChat } from './state';
 import chat, { getUserInput } from './chat';
 import ask from './ask';
 import fs from 'fs';
+import path from 'path'
 
 const program = new Command()
 
-const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../package.json"), 'utf8'));
 const { version, description } = packageJson;
 
 program.version(version).description(description);
