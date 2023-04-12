@@ -15,7 +15,8 @@ const { version, description } = packageJson;
 program.version(version).description('chat with chatGPT!')
 
 program
-  .action(() => chat())
+  .option("-4, --four", 'gpt-4')
+  .action((options) => chat(options.four ? "gpt-4" : undefined))
 
 
 program
