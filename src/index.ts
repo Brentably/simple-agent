@@ -28,19 +28,21 @@ program
 program
   .command('write <filePath> [prompt...]')
   .alias('w')
+  .option("-4, --four", 'gpt-4')
   .description('write or modify a file given a path and prompt.')
-  .action(async (filePath, promptParts) => {
+  .action(async (filePath, promptParts, cmdObj) => {
     const prompt = promptParts.join(' ')
-    await writeFileWithPrompt(filePath, prompt);
+    await writeFileWithPrompt(filePath, prompt, cmdObj.four ? "gpt-4" : "gpt-3.5-turbo");
   });
 
 program
   .command('ask <filePath> [prompt...]')
   .alias('a')
+  .option("-4, --four", 'gpt-4')
   .description('ask a question about a file, it will automatically pull in a file as context')
-  .action(async (filePath, promptParts) => {
+  .action(async (filePath, promptParts, cmdObj) => {
     const prompt = promptParts.join(' ')
-    await ask(filePath, prompt);
+    await ask(filePath, prompt, cmdObj.four ? "gpt-4" : "gpt-3.5-turbo");
   });
 
 program.parseAsync(process.argv)

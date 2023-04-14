@@ -13,14 +13,14 @@ function readFile(filePath: string) {
 }
 
 
-export default async function writeFileWithPrompt(filePath: string, userPrompt: string) {
+export default async function writeFileWithPrompt(filePath: string, userPrompt: string, model:string = "gpt-3.5-turbo") {
   console.log(`file path: ${chalk.green(filePath)}\n userPrompt: ${userPrompt}`);
   
   const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : ''
 
   const prompt = `
   Your job is to modify a code file given a prompt. Sometimes the file will be empty. Create the file from scratch if that is the case.
-  Respond with only the modified or created file. You do not need to explain or say anything else. Keep the file as similar as possible and only change what is asked in the prompt.
+  Respond with only the modified or created file. You do not need to explain or say anything else. ${fileContent ? `Keep the file as similar as possible and only change what is asked in the prompt.` : null}
   
   
   ${fileContent ? `Here is the complete file: \`\`\`\n${fileContent}\n\`\`\`` : null}
@@ -30,7 +30,7 @@ export default async function writeFileWithPrompt(filePath: string, userPrompt: 
 
 
   // if there's a codeblock, return codeblock, otherwise, wrap chatgpts response in a backtick delimiter
-  const res = await getChatCompletion(prompt, "gpt-3.5-turbo", 0).then((string) => string.match(/```([\s\S]*?)```/g) ? string : `\`\`\`\n${string}\n\`\`\`` ) 
+  const res = await getChatCompletion(prompt, model, 0).then((string) => string.match(/```([\s\S]*?)```/g) ? string : `\`\`\`\n${string}\n\`\`\`` ) 
   
   console.log(`Openai res: \n${res}`);
 
