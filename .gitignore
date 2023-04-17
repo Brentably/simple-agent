@@ -9,3 +9,5 @@ dist
 devStore.json
 
 /local
+
+.DS_Store
