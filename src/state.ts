@@ -2,7 +2,7 @@ import fs from "fs";
 import { ChatCompletionRequestMessage } from "openai";
 import path from "path";
 import { calcTokens } from "./openai";
-
+import chalk from 'chalk'
 
 interface Config {
   apiKey: string;
@@ -72,15 +72,16 @@ export const trimMessages = (number: number = 5) => {
     const messagesHistory = ps.messagesHistory
     const firstMessage = messagesHistory.shift();
     if(!firstMessage) throw new Error("tried to trim messages, but there was no first message")
-    let trimmedMsgs = '' // delete
+    let trimmedMsgsTokens = 0 // delete
     for(let i = 0; i < number; i++) {
+    
       const trimmed = messagesHistory.shift()
-      trimmedMsgs += trimmed //delete
+      if(!trimmed) throw new Error("state -> trimMessages() no messages to trim")
+      trimmedMsgsTokens += calcTokens(trimmed.content) //delete
     }
-
-    console.log(`${calcTokens(trimmedMsgs)} tokens trimmed`) //delete
+    console.log(chalk.blue(`${trimmedMsgsTokens} tokens trimmed`)) //delete
 
     messagesHistory.unshift(firstMessage)
-    return ({...ps, messagesHistory})
+    return ({...ps, messagesHistory, historyTokens: `${parseInt(ps.historyTokens) - trimmedMsgsTokens}`})
   })
 }

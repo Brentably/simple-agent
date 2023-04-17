@@ -9,7 +9,7 @@ const PRICING_RATE:{[key:string]:any} = {
   "gpt-4-32k": {"prompt": 0.06, "completion": 0.12},
 }
 const contextLength:{[key:string]:number} = {
-  "gpt-3.5-turbo": 4097,
+  "gpt-3.5-turbo": 4050, // 4097 Exactly but method of calculating tokens is a little rough
   "gpt-4": 8192
 }
 
@@ -31,11 +31,13 @@ async function getOpenAI() {
 // calls openai, stores the message history in store.json
 export async function getChatCompletion(message: string, model = "gpt-3.5-turbo", temperature?: number) {
   const openai = await getOpenAI()
+  if(parseInt(readStore().historyTokens) + calcTokens(message) > contextLength[model]) trimMessages() // keeps it within context length
+  
   const {messagesHistory: messages, historyTokens} = readStore()
   messages.push({role: "user", content: message})
 
 
-  if(parseInt(historyTokens) + calcTokens(message) > contextLength[model]) trimMessages() // keeps it within context length
+
 
   const completion = await openai.createChatCompletion({
     model: model,
@@ -48,7 +50,7 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
   const {prompt_tokens, completion_tokens} = completion.data.usage!
   const expense = calculateExpense(prompt_tokens, completion_tokens, model)
   // the weird syntax is just necessary for rounding to 6 decimal places lol
-  writeStore((ps) => ({...ps, historyTokens: `${prompt_tokens+completion_tokens}`, totalExpense:`${parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense}`, messagesHistory: messages, }));
+  writeStore((ps) => ({...ps, historyTokens: `${prompt_tokens+completion_tokens}`, totalExpense:`${(parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense).toFixed(6)}`, messagesHistory: messages, }));
   return completion.data.choices[0].message.content
 }
 
@@ -60,7 +62,7 @@ export async function getChatCompletionStandalone(message: string, model = "gpt-
   const completion = await openai.createChatCompletion({
     model: model,
     messages: messages,
-    temperature: temperature
+    temperature
   });
 
   if(!completion.data.choices[0].message) throw new Error("something fucked up")
