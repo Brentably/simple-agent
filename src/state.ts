@@ -79,7 +79,7 @@ export const trimMessages = (number: number = 5) => {
       if(!trimmed) throw new Error("state -> trimMessages() no messages to trim")
       trimmedMsgsTokens += calcTokens(trimmed.content) //delete
     }
-    console.log(chalk.blue(`${trimmedMsgsTokens} tokens trimmed`)) //delete
+    console.log(chalk.yellow(`${trimmedMsgsTokens} tokens trimmed`)) //delete
 
     messagesHistory.unshift(firstMessage)
     return ({...ps, messagesHistory, historyTokens: `${parseInt(ps.historyTokens) - trimmedMsgsTokens}`})
