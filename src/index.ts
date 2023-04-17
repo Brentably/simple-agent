@@ -8,10 +8,15 @@ import ask from './ask';
 import fs from 'fs';
 import path from 'path'
 
+// Check for updates once a day
+
+// Show a notification if a new version is available
+
 const program = new Command()
 
 const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../package.json"), 'utf8'));
 const { version, description } = packageJson;
+
 
 program.version(version).description(description);
 

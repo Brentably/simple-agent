@@ -1,11 +1,12 @@
 {
   "name": "wtfdid-cli",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "A CLI for chat GPT and writing code with GPT as an assistant",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && npm link"
+    "build": "tsc && npm link",
+    "release": "release-it"
   },
   "bin": {
     "wtfdid": "./build/index.js",
@@ -17,7 +18,8 @@
   "devDependencies": {
     "@types/commander": "^2.12.2",
     "@types/inquirer": "^9.0.3",
-    "@types/prismjs": "^1.26.0"
+    "@types/prismjs": "^1.26.0",
+    "release-it": "^15.10.1"
   },
   "dependencies": {
     "commander": "^10.0.0",
