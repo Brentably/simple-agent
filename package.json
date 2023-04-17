@@ -1,6 +1,6 @@
 {
   "name": "wtfdid-cli",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "A CLI for chat GPT and writing code with GPT as an assistant",
   "main": "index.ts",
   "scripts": {
