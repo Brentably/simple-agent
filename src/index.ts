@@ -25,6 +25,8 @@ program
   .description('chat with chatGPT!')
   .action(() => chat())
 
+
+
 program
   .command('clear')
   .description('clear the chat history')
