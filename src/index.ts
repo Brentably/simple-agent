@@ -7,6 +7,15 @@ import chat, { getUserInput } from './chat';
 import ask from './ask';
 import fs from 'fs';
 import path from 'path'
+import experimentalChat from './experimentalChat';
+import Mixpanel from 'mixpanel'
+var mixpanel = Mixpanel.init('04ff0d092d6141a774c95ad8c2cf0d41');
+import os from 'os'
+
+// Note: you must supply the user_id who performed the event in the `distinct_id` field
+mixpanel.track('Usage', {
+  'distinct_id': os.hostname()
+})
 
 // Check for updates once a day
 
@@ -25,12 +34,16 @@ program
   .description('chat with chatGPT!')
   .action(() => chat())
 
+program
+  .command('experimental')
+  .description('chat with chatGPT!')
+  .action(() => experimentalChat())
 
 
 program
   .command('clear')
   .description('clear the chat history')
-  .action(clearChat)
+  .action(() => clearChat())
 
 program
   .command('write <filePath> [prompt...]')

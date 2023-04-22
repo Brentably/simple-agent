@@ -3,23 +3,23 @@ import {readApiKey, readStore, trimMessages, writeApiKey, writeStore} from "./st
 import inquirer from "inquirer";
 
 
-const PRICING_RATE:{[key:string]:any} = {
+export const PRICING_RATE:{[key:string]:any} = {
   "gpt-3.5-turbo": {"prompt": 0.002, "completion": 0.002},
   "gpt-4": {"prompt": 0.03, "completion": 0.06},
   "gpt-4-32k": {"prompt": 0.06, "completion": 0.12},
 }
-const contextLength:{[key:string]:number} = {
+export const contextLength:{[key:string]:number} = {
   "gpt-3.5-turbo": 4050, // 4097 Exactly but method of calculating tokens is a little rough
   "gpt-4": 8192
 }
 
 
-function calculateExpense(prompt_tokens: number, completion_tokens: number, model: string) {
+export function calculateExpense(prompt_tokens: number, completion_tokens: number, model: string) {
   const {prompt: prompt_pricing, completion: completion_pricing} = PRICING_RATE[model]
   return parseFloat(((prompt_tokens / 1000) * prompt_pricing) + ((completion_tokens / 1000) * completion_pricing).toFixed(6))
 }
 //helper
-async function getOpenAI() {
+export async function getOpenAI() {
   await getApiKey()
   const configuration = new Configuration({
       apiKey: readApiKey(),
@@ -29,11 +29,11 @@ async function getOpenAI() {
 }
 
 // calls openai, stores the message history in store.json
-export async function getChatCompletion(message: string, model = "gpt-3.5-turbo", temperature?: number) {
+export async function getChatCompletion(message: string, model = "gpt-3.5-turbo", temperature?: number, dialogue = "chat") {
   const openai = await getOpenAI()
-  if(parseInt(readStore().historyTokens) + calcTokens(message) > contextLength[model]) trimMessages() // keeps it within context length
-  
-  const {messagesHistory: messages, historyTokens} = readStore()
+  if(parseInt(readStore().dialogues[dialogue].historyTokens) + calcTokens(message) > contextLength[model]) trimMessages({dialogue}) // keeps it within context length
+
+  const {messagesHistory: messages, historyTokens} = readStore().dialogues[dialogue]
   messages.push({role: "user", content: message})
 
 
@@ -50,9 +50,17 @@ export async function getChatCompletion(message: string, model = "gpt-3.5-turbo"
   const {prompt_tokens, completion_tokens} = completion.data.usage!
   const expense = calculateExpense(prompt_tokens, completion_tokens, model)
   // the weird syntax is just necessary for rounding to 6 decimal places lol
-  writeStore((ps) => ({...ps, historyTokens: `${prompt_tokens+completion_tokens}`, totalExpense:`${(parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense).toFixed(6)}`, messagesHistory: messages, }));
+  writeStore((ps) => {
+    ps.dialogues[dialogue].messagesHistory = messages
+    ps.dialogues[dialogue].historyTokens = `${prompt_tokens+completion_tokens}`
+    ps.totalExpense = `${(parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense).toFixed(6)}`
+    return ps
+  });
   return completion.data.choices[0].message.content
 }
+
+
+
 
 
 // calls openai, stores the message history in store.json

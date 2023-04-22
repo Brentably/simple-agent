@@ -75,3 +75,14 @@ You can use shortcuts for the `ask` and `write` commands:
 
 P.S.
 big props to `wtfhack -4 w` for helping me write this readme ;)
+
+
+
+
+====================================================================
+Notice: Usage Tracking
+
+We collect basic usage data to understand how frequently our CLI app is being used. We DO NOT collect detailed usage information or any personal data.
+
+By using this application, you agree to the collection of anonymous usage frequency data. If you want to opt out, contact me @BingBongBrent on Twitter, or submit a PR with an opt out option, or fork the repo :)
+====================================================================

@@ -21,10 +21,10 @@ program
   .action((options) => chat(options.four ? "gpt-4" : undefined))
 
 
-program
+  program
   .command('clear')
   .description('clear the chat history')
-  .action(clearChat)
+  .action(() => clearChat())
 
 //   program
 //   .command('write <filePath> [prompt...]')

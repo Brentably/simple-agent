@@ -4,14 +4,15 @@
   "description": "A CLI for chat GPT and writing code with GPT as an assistant",
   "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ts-node src/index.ts experimental",
+    "clearStore": "ts-node src/devScripts/resetStore.ts",
     "build": "tsc && npm link",
     "release": "release-it"
   },
   "bin": {
     "wtfdid": "./build/index.js",
     "wtfhack": "./build/index.js",
-    "wtfchat": "./build/chatShortcut.js"
+    "wtfchat": "./build/indexChat.js"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +25,7 @@
   "dependencies": {
     "commander": "^10.0.0",
     "inquirer": "^8.2.5",
+    "mixpanel": "^0.17.0",
     "openai": "^3.2.1",
     "prismjs": "^1.29.0"
   }

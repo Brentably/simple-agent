@@ -8,10 +8,14 @@ interface Config {
   apiKey: string;
 }
 
-type Store = {
+type dialogue = {
   messagesHistory: ChatCompletionRequestMessage[]
   historyTokens: string,
-  totalExpense: string
+}
+
+type Store = {
+  dialogues: {[key: string]: dialogue}
+  totalExpense: string,
 };
 
 const configFilePath = path.resolve(__dirname, "../.env");
@@ -62,14 +66,21 @@ export function writeStore(update: (prevStore: Store) => Store | Store) {
   }
 }
 
-export function clearChat() {
-  writeStore(ps => ({...ps, historyTokens: "12", messagesHistory: [{"role": "system", "content": "You are a helpful assistant who helps write code"}]}))
+export function clearChat(dialogue = "chat", systemString = "You are a helpful assistant who helps write code") {
+  writeStore(ps => {
+    console.log(ps.dialogues)
+    console.log(dialogue)
+    ps.dialogues[`${dialogue}`].messagesHistory = [{role: "system", content: systemString}]
+    ps.dialogues[`${dialogue}`].historyTokens = calcTokens(systemString).toString()
+    return ps
+  })
   console.log('message history cleared')
 }
 
-export const trimMessages = (number: number = 5) => {
+
+export const trimMessages = ({number: number = 5, dialogue = 'chat'}) => {
   writeStore(ps => {
-    const messagesHistory = ps.messagesHistory
+    const messagesHistory = ps.dialogues[dialogue].messagesHistory
     const firstMessage = messagesHistory.shift();
     if(!firstMessage) throw new Error("tried to trim messages, but there was no first message")
     let trimmedMsgsTokens = 0 // delete
@@ -82,6 +93,6 @@ export const trimMessages = (number: number = 5) => {
     console.log(chalk.yellow(`${trimmedMsgsTokens} tokens trimmed`)) //delete
 
     messagesHistory.unshift(firstMessage)
-    return ({...ps, messagesHistory, historyTokens: `${parseInt(ps.historyTokens) - trimmedMsgsTokens}`})
+    return ({...ps, messagesHistory, historyTokens: `${parseInt(ps.dialogues[dialogue].historyTokens) - trimmedMsgsTokens}`})
   })
 }
