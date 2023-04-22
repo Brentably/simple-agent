@@ -7,7 +7,7 @@ import chat, { getUserInput } from './chat';
 import ask from './ask';
 import fs from 'fs';
 import path from 'path'
-import experimentalChat from './experimentalChat';
+import experimentalChat from './agent/experimentalChat';
 import Mixpanel from 'mixpanel'
 var mixpanel = Mixpanel.init('04ff0d092d6141a774c95ad8c2cf0d41');
 import os from 'os'

@@ -4,7 +4,7 @@
   "description": "A CLI for chat GPT and writing code with GPT as an assistant",
   "main": "index.ts",
   "scripts": {
-    "test": "ts-node src/index.ts experimental",
+    "test": "ts-node src/devScripts/resetStore.ts && ts-node src/index.ts experimental",
     "reset": "ts-node src/devScripts/resetStore.ts",
     "build": "tsc && npm link",
     "release": "release-it"
