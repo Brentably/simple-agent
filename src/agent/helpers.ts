@@ -26,17 +26,14 @@ export const makeSystemString = (systemStringTemplate: string, possibleChoices: 
 }
 
 // just one arg right now
-export const parseActionAndArg = (message: string) => {
+export const parseAction = (message: string): [string, string] => {
   const messageArr = message.split("\n")
-  console.log(messageArr)
   for(let thoughtOrAction of messageArr) {
     if(thoughtOrAction.toLowerCase().startsWith("action:")) {
       let justAction = thoughtOrAction.split(' ').slice(1).join(' ') // remove action from beginning
-      const [choice, arg]= justAction.split(/[()]/)
-      console.log("choice is:", choice)
-      console.log("arg is", arg )
+      const [choice, arg] = justAction.split(/[()]/)
       return [choice, arg]
     }
   }
-  return ['', '']
+  throw new Error("parseActionAndArg() failed")
 }

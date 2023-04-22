@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "test": "ts-node src/index.ts experimental",
-    "clearStore": "ts-node src/devScripts/resetStore.ts",
+    "reset": "ts-node src/devScripts/resetStore.ts",
     "build": "tsc && npm link",
     "release": "release-it"
   },

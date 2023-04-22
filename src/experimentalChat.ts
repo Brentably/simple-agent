@@ -3,10 +3,22 @@ import { calcTokens, calculateExpense, contextLength, getOpenAI } from './openai
 import { highlightCode } from './utils/highlight';
 import chalk from 'chalk'
 import { readStore, trimMessages, writeStore } from './state';
-import { makeSystemString, parseActionAndArg } from './agent/helpers';
+import { makeSystemString, parseAction } from './agent/helpers';
 
 
-const possibleChoices = ['Ask', 'Finish']
+async function Ask(question: string) {
+  console.log(`|Agent's Question: ${question}`)
+  const answer = await getUserInput("|Answer: ")
+  return answer
+}
+
+
+// we use camelcase for the choices because I think theres a higher probability the LLM parses it correctly
+const choicesToFunctions: {[key:string]: Function} = {
+  "ask_question": Ask,
+}
+
+const possibleChoices = [...Object.keys(choicesToFunctions), 'finish']
 
 
 /* 
@@ -16,30 +28,30 @@ Does observation return a response in natural language?
 */
 
 const systemStringTemplate = 
-`You are the internal Monologue of a Chat Assistant. 
+`${''/*`You are the internal Monologue of a Chat Assistant.`*/}
 You run in a loop of Thought, Action, Observation.
 Use Thought to describe your thoughts about the question you have been asked.
 Use Action to run one of the actions available to you - 
-Observation will be the result of running those actions.
+Result will be the result of running those actions.
 
 Choices:
 {{possibleChoices}}
 
 Rules:
 - If you have received an Input from the user, you should reply with a Thought and an Action.
-- If you have received an Observation from a tool, you should reply with a Thought and an Action.
-- You should never reply with an Input.
+- If you have received an Observation, you should reply with a Thought and an Action.
+- You should never reply with an Input or Observation.
 
 Example: 
 
 Input: What is my name?
 Thought: I don't have access to the user's name. I need to ask for it.
-Action: Ask("What is your name?")
+Action: ask_question("What is your name?")
 Observation: Brent
 Thought: The users name is Brent
-Action: Finish("Brent")
+Action: finish("Brent")
 
-Let me reiterate: Always prefix your outputs with Thought, or Action to signify what you're doing. Always end with an action.
+Remember: Prefix your outputs with Thought or Action to signify what you're doing.
 `
 
 const systemString = makeSystemString(systemStringTemplate, possibleChoices)
@@ -77,6 +89,7 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
 
   console.log(`Input: ${inputString}`)
 
+  while(true) {
   const completion = await openai.createChatCompletion({
     model: model,
     messages: messages,
@@ -87,9 +100,21 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   messages.push(completion.data.choices[0].message)
 
   const respMessage = completion.data.choices[0].message.content
-  const [action, arg] = parseActionAndArg(respMessage)
+  console.log(respMessage)
+  const [choice, arg] = parseAction(respMessage)
 
-  // calculate usage and update store
+  if(choice.toLowerCase() == "finish") {
+    console.log(`Output: ${arg}`)
+    break
+  }
+
+  const functionToCall = choicesToFunctions[choice]
+
+  const observation = await functionToCall(arg)
+  messages.push({role: "user", content: `Result: ${observation}`})
+  console.log(`Result: ${observation}`)
+
+  //calc usage and update store
   const {prompt_tokens, completion_tokens} = completion.data.usage!
   const expense = calculateExpense(prompt_tokens, completion_tokens, model)
     writeStore((ps) => {
@@ -98,7 +123,8 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
       ps.totalExpense = `${(parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense).toFixed(6)}`
       return ps
     });
-  return completion.data.choices[0].message.content
+  }
+
 }
 
 
