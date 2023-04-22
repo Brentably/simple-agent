@@ -31,7 +31,15 @@ export const parseAction = (message: string): [string, string] => {
   for(let thoughtOrAction of messageArr) {
     if(thoughtOrAction.toLowerCase().startsWith("action:")) {
       let justAction = thoughtOrAction.split(' ').slice(1).join(' ') // remove action from beginning
-      const [choice, arg] = justAction.split(/[()]/)
+      const choice = justAction.split('(')[0]
+      const actionArr = justAction.split('')
+      const firstParenthIndex = actionArr.findIndex(el => el === '(')
+      const lastParenthIndex = actionArr.findLastIndex(el => el === ")")
+      
+      const argArr = actionArr.slice(firstParenthIndex +1, lastParenthIndex)
+      const arg = argArr.join('')
+
+      console.log(choice, arg)
       return [choice, arg]
     }
   }

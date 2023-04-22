@@ -7,13 +7,12 @@
           "content": "You are a helpful assistant who helps write code"
         }
       ],
-      "totalExpense": "0",
       "historyTokens": "12"
     },
     "experimentalChat": {
       "messagesHistory": [],
-      "totalExpense": "0",
       "historyTokens": "12"
-    }
+    },
+    "totalExpense": "0"
   }
 }
