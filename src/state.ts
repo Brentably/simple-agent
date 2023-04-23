@@ -66,6 +66,7 @@ export function clearChat() {
   writeStore(ps => {
     ps.dialogues.agentChat.messagesHistory = []
     ps.dialogues.agentChat.historyTokens = "0"
+    ps.totalExpense = "0"
     return ps
   })
   console.log('message history cleared')
@@ -87,6 +88,7 @@ export const trimMessages = (number = 5) => {
     console.log(chalk.yellow(`${trimmedMsgsTokens} tokens trimmed`)) //delete
 
     messagesHistory.unshift(firstMessage)
-    return ({...ps, messagesHistory, historyTokens: `${parseInt(ps.dialogues.agentChat.historyTokens) - trimmedMsgsTokens}`})
+    ps.dialogues.agentChat.historyTokens = `${parseInt(ps.dialogues.agentChat.historyTokens) - trimmedMsgsTokens}`
+    return ps
   })
 }

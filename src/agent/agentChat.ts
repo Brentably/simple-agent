@@ -13,13 +13,20 @@ async function Ask(question: string) {
   return answer
 }
 
+function get_weather() {
+  return 'sunny'
+}
 
 // we use camelcase for the choices because I think theres a higher probability the LLM parses it correctly
 const choicesToFunctions: {[key:string]: Function} = {
   "ask_question": Ask,
+  'get_weather': get_weather
 }
 
-const possibleChoices = [...Object.keys(choicesToFunctions), 'finish']
+const possibleChoices = [
+  'ask_question(question: string)',
+  'get_weather()'
+]
 
 
 /* 
@@ -152,7 +159,7 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   } catch (error: any) {
   // const message = (message in Object.keys(error)) ? error : error
   console.log(`${chalk.blue("Result: ")}${error.message}`)
-  messages.push({role: "user", content: `Result: ${error.message}`})
+  messages.push({role: "user", content: `Result: ${error.message}. Please make sure to invoke a function for your Action.`})
   
   }
   //calc usage and update store
