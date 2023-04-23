@@ -64,7 +64,7 @@ Examples:
   Thought: The user wants me to write a function. I need to ask for more details about the function.
   Action: ask_question("Sure! What should the function do? Can you provide more details?")
   Result: Yeah, it should just be a javascript function called hello that returns "world"
-  Thought: The user wants a simple JavaScript function that returns true. I can create a function that does that.
+  Thought: The user wants a simple JavaScript function that returns "world". I can create a function that does that.
   Action: finish(
   \`\`\`
   const hello = () => {
@@ -157,8 +157,7 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   } catch (error: any) {
   // const message = (message in Object.keys(error)) ? error : error
   console.log(`${chalk.blue("Result: ")}${error.message}`)
-  messages.push({role: "user", content: `Result: ${error.message}`})
-  
+  messages.push({role: "user", content: `Result: ${error.message}. Make sure to invoke a function for your Action. Pay attention to syntax and make sure it is formatted exactly like the examples.`})
   }
   //calc usage and update store
   updateState(completion, messages)
