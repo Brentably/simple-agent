@@ -37,8 +37,7 @@ Use Action to run a function available to you
 Result will be the result of running these functions.
 
 functions:
-ask_question(question: string)
-finish(response: string)
+{{possibleChoices}}
 
 Rules:
 - If you have received an Input from the user, you should reply with a Thought and an Action.
