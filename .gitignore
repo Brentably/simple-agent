@@ -1,0 +1,13 @@
+/node_modules
+
+build
+
+.env
+
+dist
+
+devStore.json
+
+/local
+
+.DS_Store

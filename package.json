@@ -1,0 +1,27 @@
+{
+  "name": "simple-agent-ts",
+  "version": "0.0.0",
+  "description": "An extremely simple starter packer to creating your own agent / agent system",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts agent",
+    "build": "tsc && npm link"
+  },
+  "bin": {
+    "agent": "./build/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/commander": "^2.12.2",
+    "@types/inquirer": "^9.0.3",
+    "@types/prismjs": "^1.26.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "commander": "^10.0.0",
+    "inquirer": "^8.2.5",
+    "openai": "^3.2.1",
+    "prismjs": "^1.29.0"
+  }
+}
