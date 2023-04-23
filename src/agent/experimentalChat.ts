@@ -135,10 +135,16 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
 
   const functionToCall = choicesToFunctions[choice]
 
+  try {
   const observation = await functionToCall(arg)
   messages.push({role: "user", content: `Result: ${observation}`})
   console.log(`Result: ${observation}`)
-
+} catch (error: any) {
+  // const message = (message in Object.keys(error)) ? error : error
+  console.log(`Result: ${error.message}`)
+  messages.push({role: "user", content: `Result: ${error.message}`})
+  
+  }
   //calc usage and update store
   const {prompt_tokens, completion_tokens} = completion.data.usage!
   const expense = calculateExpense(prompt_tokens, completion_tokens, model)

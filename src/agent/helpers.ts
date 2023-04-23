@@ -27,21 +27,15 @@ export const makeSystemString = (systemStringTemplate: string, possibleChoices: 
 
 // just one arg right now
 export const parseAction = (message: string): [string, string] => {
-  const messageArr = message.split("\n")
-  for(let thoughtOrAction of messageArr) {
-    if(thoughtOrAction.toLowerCase().startsWith("action:")) {
-      let justAction = thoughtOrAction.split(' ').slice(1).join(' ') // remove action from beginning
-      const choice = justAction.split('(')[0]
-      const actionArr = justAction.split('')
-      const firstParenthIndex = actionArr.findIndex(el => el === '(')
-      const lastParenthIndex = actionArr.findLastIndex(el => el === ")")
-      
-      const argArr = actionArr.slice(firstParenthIndex +1, lastParenthIndex)
-      const arg = argArr.join('')
-
-      console.log(choice, arg)
-      return [choice, arg]
-    }
-  }
-  throw new Error("parseActionAndArg() failed")
+  const messageArr = message.split("\n"); //split by spaces or linebreak
+  const actionIndex = messageArr.findIndex(el => el.toLowerCase().startsWith('action:'))
+  if(actionIndex === -1) throw new Error("parseActionAndArg() failed")
+  const justAction = messageArr.slice(actionIndex).join('\n').split(' ').slice(1).join(' ')
+  const choice = justAction.split('(')[0]
+  const actionArr = justAction.split('')
+  const firstParenthIndex = actionArr.findIndex(el => el === '(')
+  const lastParenthIndex = actionArr.findLastIndex(el => el === ")")
+  const argArr = actionArr.slice(firstParenthIndex +1, lastParenthIndex)
+  const arg = argArr.join('')
+  return [choice, arg]
 }
