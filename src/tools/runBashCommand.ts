@@ -9,7 +9,7 @@ export async function runBashCommand(command: string ) {
 
 
   try {
-    const output = execSync('ls /some/file/does/not/exist');
+    const output = execSync(command);
     return output
   } catch (error: any) {
     if(!error.stderr) throw new Error('no stderr property on error thrown from execSync. check runBashCommand.ts')
