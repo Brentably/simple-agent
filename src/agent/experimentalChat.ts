@@ -6,6 +6,7 @@ import { readStore, trimMessages, writeStore } from '../state';
 import { makeSystemString, parseAction } from './helpers';
 import { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai';
 import type {AxiosResponse} from 'openai/node_modules/axios/index.d.ts'
+import {viewFileStructure} from '../tools/index'
 
 async function Ask(question: string) {
   console.log(`|Agent's Question: ${question}`)
@@ -17,11 +18,15 @@ async function Ask(question: string) {
 // we use camelcase for the choices because I think theres a higher probability the LLM parses it correctly
 const choicesToFunctions: {[key:string]: Function} = {
   "ask_question": Ask,
+  "view_file_structure": viewFileStructure
 }
 
-const possibleChoices = [...Object.keys(choicesToFunctions), 'finish']
+const possibleChoices = [
+  'ask_question(question: string)',
+  'view_file_structure()'
+]
 
-
+possibleChoices.push('finish(output: string)')
 /* 
 there are a many different ways you could set this up, and I'm not sure which would produce the most optimal results. 
 Do you have a plan? Do you call them tools or actions or choices? What about the syntax of functions? 
@@ -39,8 +44,7 @@ Use Action to run a function available to you
 Result will be the result of running these functions.
 
 functions:
-ask_question(question: string)
-finish(response: string)
+{{possibleChoices}}
 
 Rules:
 - If you have received an Input from the user, you should reply with a Thought and an Action.
