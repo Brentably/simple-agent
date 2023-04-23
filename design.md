@@ -24,7 +24,8 @@ Observation:
 
 `
 
-
+langchain loc: 2015
+babyagi: 2831
 
 User flow:
 - refactoring

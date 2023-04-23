@@ -59,7 +59,6 @@ export const parseAction = (message: string): [string, string[]] => {
     return ["run_code", [messageArr.slice(actionIndex+2, messageArr.length-2).join('\n')]]
   }
   const justAction = messageArr.slice(actionIndex).join('\n').split(' ').slice(1).join(' ')
-  console.log('justAction', justAction)
   const choice = justAction.split('(')[0]
   const actionArr = justAction.split('')
   const firstParenthIndex = actionArr.findIndex(el => el === '(')

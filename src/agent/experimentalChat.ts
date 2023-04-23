@@ -6,7 +6,7 @@ import { readStore, trimMessages, writeStore } from '../state';
 import { makeSystemString, parseAction } from './helpers';
 import { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai';
 import type {AxiosResponse} from 'openai/node_modules/axios/index.d.ts'
-import {viewFileStructure, runBashCommand, read_file, create_file, write_to_file, run_code, searchWolfram} from '../tools/index'
+import {viewFileStructure, runBashCommand, read_file, create_file, write_to_file, run_code, searchWolfram, read_webpage} from '../tools/index'
 import { getUserInput } from '../user';
 
 async function Ask(question: string) {
@@ -20,23 +20,23 @@ async function Ask(question: string) {
 const choicesToFunctions: {[key:string]: Function} = {
   "ask_question": Ask,
   "read_file": read_file,
-  "create_file": create_file,
   "write_to_file": write_to_file,
   "run_code": run_code,
   "execute_command": runBashCommand,
   "search_wolfram": searchWolfram,
-  "do_math": searchWolfram
+  "do_math": searchWolfram,
+  "read_webpage": read_webpage
 }
 
 const possibleChoices = [
-  'read_file(file_path: string)', 
-  'create_file(file_path: string)',
+  'read_file(file_path: string)',
   'run_code(code_to_run: string)',
   'write_to_file(file_path: string, content: string)',
   'ask_question(question: string)',
   'execute_command(bash_command: string)',
   'search_wolfram(query: string)',
-  'do_math(query: string)'
+  'do_math(query: string)',
+  'read_webpage(url: string)'
 ]
 
 possibleChoices.push('finish(output: string)')
