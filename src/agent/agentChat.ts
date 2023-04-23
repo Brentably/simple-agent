@@ -25,7 +25,8 @@ const choicesToFunctions: {[key:string]: Function} = {
 
 const possibleChoices = [
   'ask_question(question: string)',
-  'get_weather()'
+  'get_weather()',
+  'finish(output: string)'
 ]
 
 
