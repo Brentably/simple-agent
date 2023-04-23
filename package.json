@@ -5,6 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "ts-node src/index.ts agent",
+    "clear": "ts-node src/index.ts clear",
     "build": "tsc && npm link"
   },
   "bin": {
