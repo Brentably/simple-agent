@@ -4,7 +4,8 @@ import { highlightCode } from '../utils/highlight';
 import chalk from 'chalk'
 import { readStore, trimMessages, writeStore } from '../state';
 import { makeSystemString, parseAction } from './helpers';
-
+import { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai';
+import type {AxiosResponse} from 'openai/node_modules/axios/index.d.ts'
 
 async function Ask(question: string) {
   console.log(`|Agent's Question: ${question}`)
@@ -103,14 +104,26 @@ export default async function expirimentalChat(model = "gpt-3.5-turbo") {
 
 
 
+
 async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperature: number = 0, dialogue = "experimentalChat") {
+  const updateState = async ( completion: AxiosResponse<CreateChatCompletionResponse, any>, messages: ChatCompletionRequestMessage[] ) => {
+    const {prompt_tokens, completion_tokens} = completion.data.usage!
+    const expense = calculateExpense(prompt_tokens, completion_tokens, model)
+      writeStore((ps) => {
+        ps.dialogues[dialogue].messagesHistory = messages
+        ps.dialogues[dialogue].historyTokens = `${prompt_tokens+completion_tokens}`
+        ps.totalExpense = `${(parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense).toFixed(6)}`
+        return ps
+      });
+  }
+  
   const openai = await getOpenAI()
   if(parseInt(readStore().dialogues[dialogue].historyTokens) + calcTokens(inputString) > contextLength[model]) trimMessages({dialogue}) // keeps it within context length
   
   const {messagesHistory: messages, historyTokens} = readStore().dialogues[dialogue]
   messages.push({role: "user", content: `Input: ${inputString}`})
 
-  console.log(`Input: ${inputString}`)
+  console.log(`${chalk.blue("Input: ")}${inputString}`)
 
   while(true) {
   
@@ -125,12 +138,14 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   messages.push(completion.data.choices[0].message)
 
   const respMessage = completion.data.choices[0].message.content
-  console.log(respMessage)
+  console.log(respMessage.replace('Thought:', chalk.blue("Thought:")).replace("Action:", chalk.blue('Action:')))
   const [choice, arg] = parseAction(respMessage)
   
   if(choice.toLowerCase() == "finish") {
-    console.log(`Output: ${arg}`)
+    console.log(`${chalk.blue("Output: ")}${highlightCode(arg)}`)
+    updateState(completion, messages)
     break
+    
   }
 
   const functionToCall = choicesToFunctions[choice]
@@ -138,26 +153,17 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   try {
   const observation = await functionToCall(arg)
   messages.push({role: "user", content: `Result: ${observation}`})
-  console.log(`Result: ${observation}`)
-} catch (error: any) {
+  console.log(`${chalk.blue("Result: ")}${observation}`)
+  } catch (error: any) {
   // const message = (message in Object.keys(error)) ? error : error
-  console.log(`Result: ${error.message}`)
+  console.log(`${chalk.blue("Result: ")}${error.message}`)
   messages.push({role: "user", content: `Result: ${error.message}`})
   
   }
   //calc usage and update store
-  const {prompt_tokens, completion_tokens} = completion.data.usage!
-  const expense = calculateExpense(prompt_tokens, completion_tokens, model)
-    writeStore((ps) => {
-      ps.dialogues[dialogue].messagesHistory = messages
-      ps.dialogues[dialogue].historyTokens = `${prompt_tokens+completion_tokens}`
-      ps.totalExpense = `${(parseFloat(parseFloat(ps.totalExpense).toFixed(6)) + expense).toFixed(6)}`
-      return ps
-    });
+  updateState(completion, messages)
   }
-
 }
-
 
 
 export async function getUserInput(prefix: string):Promise<string> {
