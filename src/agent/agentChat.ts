@@ -9,7 +9,7 @@ import type {AxiosResponse} from 'openai/node_modules/axios/index.d.ts'
 import {viewFileStructure, runBashCommand, read_file, create_file, write_to_file, run_code, searchWolfram, read_webpage} from '../tools/index'
 import { getUserInput } from '../user';
 // import {get_weather} from '../tools/get_weather'
-import {getWeather} from '../tools/get_weather'
+// import {getWeather} from '../tools/get_weather'
 
 async function Ask(question: string) {
   console.log(`|Agent's Question: ${question}`)
@@ -28,7 +28,7 @@ const choicesToFunctions: {[key:string]: Function} = {
   "search_wolfram": searchWolfram,
   "do_math": searchWolfram,
   "read_webpage": read_webpage,
-  "get_weather": getWeather
+  // "get_weather": getWeather
 }
 
 const possibleChoices = [
@@ -40,7 +40,7 @@ const possibleChoices = [
   'search_wolfram(singleQuery: string)',
   'do_math(query: string)',
   'read_webpage(url: string)',
-  'get_weather()'
+  // 'get_weather()'
 ]
 
 possibleChoices.push('finish(output: string)')
