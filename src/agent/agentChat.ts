@@ -6,6 +6,8 @@ import { readStore, trimMessages, writeStore } from '../state';
 import { makeSystemString, parseAction } from './helpers';
 import { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai';
 import type {AxiosResponse} from 'openai/node_modules/axios/index.d.ts'
+import {viewFileStructure, runBashCommand, read_file, create_file, write_to_file, run_code, searchWolfram, read_webpage} from '../tools/index'
+import { getUserInput } from '../user';
 
 async function Ask(question: string) {
   console.log(`|Agent's Question: ${question}`)
@@ -13,28 +15,38 @@ async function Ask(question: string) {
   return answer
 }
 
-function get_weather() {
-  return 'sunny'
-}
 
 // we use camelcase for the choices because I think theres a higher probability the LLM parses it correctly
 const choicesToFunctions: {[key:string]: Function} = {
   "ask_question": Ask,
-  'get_weather': get_weather
+  "read_file": read_file,
+  "write_to_file": write_to_file,
+  "run_code": run_code,
+  "execute_command": runBashCommand,
+  "search_wolfram": searchWolfram,
+  "do_math": searchWolfram,
+  "read_webpage": read_webpage
 }
 
 const possibleChoices = [
+  'read_file(file_path: string)',
+  'run_code(code_to_run: string)',
+  'write_to_file(file_path: string, content: string)',
   'ask_question(question: string)',
-  'get_weather()',
-  'finish(output: string)'
+  'execute_command(bash_command: string)',
+  'search_wolfram(query: string)',
+  'do_math(query: string)',
+  'read_webpage(url: string)'
 ]
 
-
+possibleChoices.push('finish(output: string)')
 /* 
 there are a many different ways you could set this up, and I'm not sure which would produce the most optimal results. 
 Do you have a plan? Do you call them tools or actions or choices? What about the syntax of functions? 
 Does observation return a response in natural language?
 */
+
+
 
 
 const systemStringTemplate = 
@@ -69,7 +81,7 @@ Examples:
   Thought: The user wants me to write a function. I need to ask for more details about the function.
   Action: ask_question("Sure! What should the function do? Can you provide more details?")
   Result: Yeah, it should just be a javascript function called hello that returns "world"
-  Thought: The user wants a simple JavaScript function that returns true. I can create a function that does that.
+  Thought: The user wants a simple JavaScript function that returns "world". I can create a function that does that.
   Action: finish(
   \`\`\`
   const hello = () => {
@@ -86,7 +98,7 @@ Let me reiterate: Always invoke a function as part of your output.
 const systemString = makeSystemString(systemStringTemplate, possibleChoices)
 
 
-export default async function agentChat(model = "gpt-3.5-turbo") {
+export default async function agentChat(model = "gpt-4") {
   console.log('\x1b[1m%s\x1b[0m', `Experimental Chat >:D`);
   console.log(` Model: ${chalk.green(model)} \n`)
   const prevMessages = Boolean(readStore().dialogues.agentChat.messagesHistory.length)
@@ -101,14 +113,16 @@ export default async function agentChat(model = "gpt-3.5-turbo") {
 
     while(true) {
       const value = await getUserInput(chalk.red(">>> "))
-      await agentCycle(value)
+      await agentCycle(value, model)
+      
+      
     }
 }
 
 
 
 
-async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperature: number = 0) {
+async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperature: number = 0, dialogue = "agentChat") {
   const updateState = async ( completion: AxiosResponse<CreateChatCompletionResponse, any>, messages: ChatCompletionRequestMessage[] ) => {
     const {prompt_tokens, completion_tokens} = completion.data.usage!
     const expense = calculateExpense(prompt_tokens, completion_tokens, model)
@@ -141,11 +155,12 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   messages.push(completion.data.choices[0].message)
 
   const respMessage = completion.data.choices[0].message.content
-  console.log(respMessage.replace('Thought:', chalk.blue("Thought:")).replace("Action:", chalk.blue('Action:')))
-  const [choice, arg] = parseAction(respMessage)
+  console.log(respMessage.replace('Thought:', chalk.blue("Thought:")).replace("\nAction:", chalk.blue('\nAction:')))
+  const [choice, args] = parseAction(respMessage)
   
   if(choice.toLowerCase() == "finish") {
-    console.log(`${chalk.blue("Output: ")}${highlightCode(arg)}`)
+     // remove quotes and unescape
+    console.log(`${chalk.blue("Output: ")}${highlightCode(args[0])}`)
     updateState(completion, messages)
     break
     
@@ -154,34 +169,17 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   const functionToCall = choicesToFunctions[choice]
 
   try {
-  const observation = await functionToCall(arg)
+  const observation = await functionToCall(...args)
   messages.push({role: "user", content: `Result: ${observation}`})
   console.log(`${chalk.blue("Result: ")}${observation}`)
   } catch (error: any) {
   // const message = (message in Object.keys(error)) ? error : error
-  console.log(`${chalk.blue("Result: ")}${error.message}`)
-  messages.push({role: "user", content: `Result: ${error.message}. Please make sure to invoke a function for your Action.`})
-  
+  console.log(`${chalk.blue("Result: ")}Error: Make sure to invoke a function for your Action. Pay attention to syntax and make sure it is formatted exactly like the examples.`)
+  messages.push({role: "user", content: `Result: Error: Make sure to invoke a function for your Action. Pay attention to syntax and make sure it is formatted exactly like the examples.`})
   }
   //calc usage and update store
   updateState(completion, messages)
   }
 }
 
-
-export async function getUserInput(prefix: string):Promise<string> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const answer:string = await new Promise((resolve) => {
-    rl.question(prefix, (input) => {
-      resolve(input);
-      rl.close();
-    });
-  });
-
-  return answer
-}
 
