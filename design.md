@@ -26,6 +26,8 @@ Observation:
 
 langchain loc: 2015
 babyagi: 2831
+simple-agent: 489
+
 
 User flow:
 - refactoring
