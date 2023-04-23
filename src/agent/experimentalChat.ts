@@ -6,7 +6,8 @@ import { readStore, trimMessages, writeStore } from '../state';
 import { makeSystemString, parseAction } from './helpers';
 import { ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai';
 import type {AxiosResponse} from 'openai/node_modules/axios/index.d.ts'
-import {viewFileStructure} from '../tools/index'
+import {viewFileStructure, runBashCommand} from '../tools/index'
+import { getUserInput } from '../user';
 
 async function Ask(question: string) {
   console.log(`|Agent's Question: ${question}`)
@@ -18,12 +19,14 @@ async function Ask(question: string) {
 // we use camelcase for the choices because I think theres a higher probability the LLM parses it correctly
 const choicesToFunctions: {[key:string]: Function} = {
   "ask_question": Ask,
-  "view_file_structure": viewFileStructure
+  "view_file_structure": viewFileStructure,
+  "run_bash_command": runBashCommand
 }
 
 const possibleChoices = [
   'ask_question(question: string)',
-  'view_file_structure()'
+  'view_file_structure()',
+  'run_bash_command(command: string)'
 ]
 
 possibleChoices.push('finish(output: string)')
@@ -168,20 +171,4 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   }
 }
 
-
-export async function getUserInput(prefix: string):Promise<string> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const answer:string = await new Promise((resolve) => {
-    rl.question(prefix, (input) => {
-      resolve(input);
-      rl.close();
-    });
-  });
-
-  return answer
-}
 

@@ -3,7 +3,7 @@ import { Command } from 'commander'
 import writeFileWithPrompt from './writeFromPrompt'
 import inquirer from 'inquirer'
 import { clearChat } from './state';
-import chat, { getUserInput } from './chat';
+import chat from './chat';
 import ask from './ask';
 import fs from 'fs';
 import path from 'path'
