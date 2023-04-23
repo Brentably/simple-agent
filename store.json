@@ -1,10 +1,63 @@
 {
   "dialogues": {
     "agentChat": {
-      "messagesHistory": [],
-      "historyTokens": "0"
+      "messagesHistory": [
+        {
+          "role": "system",
+          "content": "\nYou run in a loop of Thought, Action, Result.\nUse Thought to describe your thoughts about the question you have been asked.\nUse Action to run a function available to you\nResult will be the result of running these functions.\n\nfunctions:\nread_file(file_path: string)\nrun_code(code_to_run: string)\nwrite_to_file(file_path: string, content: string)\nask_question(question: string)\nexecute_command(bash_command: string)\nsearch_wolfram(query: string)\ndo_math(query: string)\nread_webpage(url: string)\nget_weather()\nfinish(output: string)\n\nRules:\n- If you have received an Input from the user, you should reply with a Thought and an Action.\n- If you have received an Observation, you should reply with a Thought and an Action.\n- You should never reply with an Input or Result.\n\nExamples: \n\n  Input: What is my name?\n  Thought: I don't have access to the user's name. I need to ask for it.\n  Action: ask_question(\"What is your name?\")\n  Result: Brent\n  Thought: The users name is Brent\n  Action: finish(\"Brent\")\n\n\n  Input: hey\n  Thought: The user has greeted me. I should respond with a greeting as well.\n  Action: ask_question(\"Hello! How can I assist you today?\")\n  Result: Write a simple function for me\n  Thought: The user wants me to write a function. I need to ask for more details about the function.\n  Action: ask_question(\"Sure! What should the function do? Can you provide more details?\")\n  Result: Yeah, it should just be a javascript function called hello that returns \"world\"\n  Thought: The user wants a simple JavaScript function that returns \"world\". I can create a function that does that.\n  Action: finish(\n  ```\n  const hello = () => {\n    return \"world\"\n  };\n  ``` \n  )\n\n\nRemember: Prefix your outputs with Thought or Action to signify what you're doing.\nLet me reiterate: Always invoke a function as part of your output. \n"
+        },
+        {
+          "role": "user",
+          "content": "Input: whats the weather?"
+        },
+        {
+          "role": "assistant",
+          "content": "Thought: The user wants to know the weather. I can use the get_weather function to provide this information.\nAction: get_weather()"
+        },
+        {
+          "role": "user",
+          "content": "Result: sunny"
+        },
+        {
+          "role": "assistant",
+          "content": "Thought: The weather is sunny.\nAction: finish(\"The weather is sunny.\")"
+        },
+        {
+          "role": "user",
+          "content": "Input: delete src/tools/get_weather.ts"
+        },
+        {
+          "role": "assistant",
+          "content": "Thought: The user wants to delete the file src/tools/get_weather.ts. I can use the execute_command function to remove the file.\nAction: execute_command(\"rm src/tools/get_weather.ts\")"
+        },
+        {
+          "role": "user",
+          "content": "Result: success"
+        },
+        {
+          "role": "assistant",
+          "content": "Thought: The file src/tools/get_weather.ts has been successfully deleted.\nAction: finish(\"The file src/tools/get_weather.ts has been successfully deleted.\")"
+        },
+        {
+          "role": "user",
+          "content": "Input: Tell me about Brentably/simple-agent on github"
+        },
+        {
+          "role": "assistant",
+          "content": "Thought: The user wants information about the Brentably/simple-agent repository on GitHub. I can use the read_webpage function to fetch the information from the repository's page.\nAction: read_webpage(\"https://github.com/Brentably/simple-agent\")"
+        },
+        {
+          "role": "user",
+          "content": "Result: Skip to content\nToggle navigation\nSign up\nProduct\nActions\nAutomate any workflow\nPackages\nHost and manage packages\nSecurity\nFind and fix vulnerabilities\nCodespaces\nInstant dev environments\nCopilot\nWrite better code with AI\nCode review\nManage code changes\nIssues\nPlan and track work\nDiscussions\nCollaborate outside of code\nExplore\nAll features\nDocumentation\nGitHub Skills\nBlog\nSolutions\nFor\nEnterprise\nTeams\nStartups\nEducation\nBy Solution\nCI/CD & Automation\nDevOps\nDevSecOps\nCase Studies\nCustomer Stories\nResources\nOpen Source\nGitHub Sponsors\nFund open source developers\nThe ReadME Project\nGitHub community articles\nRepositories\nTopics\nTrending\nCollections\nPricing\nIn this repository\nAll GitHub\n↵\nJump to\n↵\nNo suggested jump to results\nIn this repository\nAll GitHub\n↵\nJump to\n↵\nIn this user\nAll GitHub\n↵\nJump to\n↵\nIn this repository\nAll GitHub\n↵\nJump to\n↵\nSign in\nSign up\n{{ message }}\nBrentably\n/\nsimple-agent\nPublic\nNotifications\nFork\n0\nStar\n1\nAn extremely simple agent system to kickstart other agent projects\n1\nstar\n0\nforks\nStar\nNotifications\nCode\nIssues\n0\nPull requests\n0\nActions\nProjects\n0\nSecurity\nInsights\nMore\nCode\nIssues\nPull requests\nActions\nProjects\nSecurity\nInsights\nBrentably/simple-agent\nThis commit does not belong to any branch on this repository, and may belong to a fork outside of the repository.\nmain\nSwitch branches/tags\nBranches\nTags\nCould not load branches\nNothing to show\n{{ refName }}\ndefault\nView all branches\nCould not load tags\nNothing to show\n{{ refName }}\ndefault\nView all tags\nName already in use\nA tag already exists with the provided branch name. Many Git commands accept both tag and branch names, so creating this branch may cause unexpected behavior. Are you sure you want to create this branch?\nCancel\nCreate\n1\nbranch\n0\ntags\nCode\nLocal\nCodespaces\nClone\nHTTPS\nGitHub CLI\nUse Git or checkout with SVN using the web URL.\nWork fast with our official CLI.\nLearn more.\nOpen with GitHub Desktop\nDownload ZIP\nSign In Required\nPlease\nsign in\nto use Codespaces.\nLaunching GitHub Desktop\nIf nothing happens, download GitHub Desktop and try again.\nLaunching GitHub Desktop\nIf nothing happens, download GitHub Desktop and try again.\nLaunching Xcode\nIf nothing happens, download Xcode and try again.\nLaunching Visual Studio Code\nYour codespace will open once ready.\nThere was a problem preparing your codespace, please try again.\nLatest commit\nGit stats\n71\ncommits\nFiles\nPermalink\nFailed to load latest commit information.\nType\nName\nLatest commit message\nCommit time\nsrc\n.env.example\n.gitignore\nREADME.md\npackage-lock.json\npackage.json\nstore.json\ntsconfig.json\nView code\nREADME.md\nSimple Agent Repository\nTo get started, clone the repo, npm install or yarn, and run npm start\nAbout\nAn extremely simple agent system to kickstart other agent projects\nResources\nReadme\nStars\n1\nstar\nWatchers\n1\nwatching\nForks\n0\nforks\nReport repository\nReleases\nNo releases published\nPackages 0\nNo packages published\nContributors 2\nLanguages\nTypeScript\n97.1%\nJavaScript\n2.9%\nFooter\n© 2023 GitHub, Inc.\nFooter navigation\nTerms\nPrivacy\nSecurity\nStatus\nDocs\nContact GitHub\nPricing\nAPI\nTraining\nBlog\nAbout\nYou can’t perform that action at this time.\nYou signed in with another tab or window. Reload to refresh your session.\nYou signed out in another tab or window. Reload to refresh your session."
+        },
+        {
+          "role": "assistant",
+          "content": "Thought: I have fetched the information about the Brentably/simple-agent repository on GitHub. I can now provide a summary of the repository.\n\nAction: finish(\"The Brentably/simple-agent repository on GitHub is an extremely simple agent system designed to kickstart other agent projects. It has 1 star, 0 forks, and 2 contributors. The main programming language used in the repository is TypeScript (97.1%), with a small portion of JavaScript (2.9%). To get started with the project, you can clone the repo, run 'npm install' or 'yarn', and then run 'npm start'.\")"
+        }
+      ],
+      "historyTokens": "1626"
     },
     "totalExpense": "0"
   },
-  "totalExpense": "0"
+  "totalExpense": "0.273450"
 }

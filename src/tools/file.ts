@@ -10,6 +10,6 @@ export function read_file(file_path: string) {
 }
 
 export function write_to_file(file_path: string, content: string) {
-  fs.writeFileSync(file_path, content);
+  fs.writeFileSync(file_path, content.replace(/\\n/g, '\n'));
   return "success"
 }
