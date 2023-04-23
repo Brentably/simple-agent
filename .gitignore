@@ -11,3 +11,5 @@ devStore.json
 /local
 
 .DS_Store
+
+agent-notepad.js

@@ -31,6 +31,17 @@ export function readApiKey(): string | undefined {
   return match ? match[1] : undefined;
 }
 
+
+export function readEnv(variable: string): string | undefined {
+  if (!fs.existsSync(configFilePath)) {
+    return undefined;
+  }
+
+  const rawData = fs.readFileSync(configFilePath, "utf8");
+  const match = RegExp(`${variable}=(.*)`).exec(rawData);
+  return match ? match[1] : undefined;
+}
+
 export function writeApiKey(apiKey: string): void {
   const dataToWrite = `OPENAI_KEY=${apiKey}`;
   fs.writeFileSync(configFilePath, dataToWrite);

@@ -10,7 +10,7 @@ export async function runBashCommand(command: string ) {
 
   try {
     console.log(`calling execSync(${command})`)
-    const output = execSync(command.slice(1, -1));
+    const output = execSync(command);
     return output.toString() || 'success'
   } catch (error: any) {
     if(!error.stderr) throw new Error('no stderr property on error thrown from execSync. check runBashCommand.ts')

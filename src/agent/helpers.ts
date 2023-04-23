@@ -25,17 +25,48 @@ export const makeSystemString = (systemStringTemplate: string, possibleChoices: 
   return systemString
 }
 
+function parseActionHelper(argArr: string[]): string[] {
+  const args = []
+  let isArg = false
+  let current = ''
+  let startAndEndChar = null
+  for(let char of argArr) {
+    if(char.length > 1) throw new Error('not char')
+    if(isArg == false && (char === `"` || char == `'`)) {
+      startAndEndChar = char
+      isArg = true
+      continue
+    }
+    if(isArg) {
+      if(char === startAndEndChar) {
+        args.push(current)
+        current = ''
+        isArg = false
+        continue
+      }
+      current += char
+    }
+  }
+  return args
+}
+
 // just one arg right now
-export const parseAction = (message: string): [string, string] => {
+export const parseAction = (message: string): [string, string[]] => {
   const messageArr = message.split("\n"); //split by spaces or linebreak
   const actionIndex = messageArr.findIndex(el => el.toLowerCase().startsWith('action:'))
   if(actionIndex === -1) throw new Error("parseActionAndArg() failed")
+  if(messageArr[actionIndex+1] && messageArr[actionIndex+1].startsWith('```') && messageArr[messageArr.length-1].endsWith('```')) {
+    return ["run_code", [messageArr.slice(actionIndex+2, messageArr.length-2).join('\n')]]
+  }
   const justAction = messageArr.slice(actionIndex).join('\n').split(' ').slice(1).join(' ')
+  console.log('justAction', justAction)
   const choice = justAction.split('(')[0]
   const actionArr = justAction.split('')
   const firstParenthIndex = actionArr.findIndex(el => el === '(')
   const lastParenthIndex = actionArr.findLastIndex(el => el === ")")
   const argArr = actionArr.slice(firstParenthIndex +1, lastParenthIndex)
-  const arg = argArr.join('')
-  return [choice, arg]
+  const args = parseActionHelper(argArr)
+  /*.split(',').map(arg => arg.trim()).map(arg =>  ((arg.startsWith(`"`) && arg.endsWith(`"`)) ? arg.slice(1, -1) : arg).replace(/\\n/g, '\n'))*/
+
+  return [choice, args]
 }
