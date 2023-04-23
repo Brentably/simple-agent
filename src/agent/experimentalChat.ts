@@ -19,13 +19,11 @@ async function Ask(question: string) {
 // we use camelcase for the choices because I think theres a higher probability the LLM parses it correctly
 const choicesToFunctions: {[key:string]: Function} = {
   "ask_question": Ask,
-  "view_file_structure": viewFileStructure,
   "run_bash_command": runBashCommand
 }
 
 const possibleChoices = [
   'ask_question(question: string)',
-  'view_file_structure()',
   'run_bash_command(command: string)'
 ]
 
@@ -149,7 +147,8 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   const [choice, arg] = parseAction(respMessage)
   
   if(choice.toLowerCase() == "finish") {
-    console.log(`${chalk.blue("Output: ")}${highlightCode(arg)}`)
+    const final = ((arg.startsWith(`"`) && arg.endsWith(`"`)) ? arg.slice(1, -1) : arg).replace(/\\n/g, '\n')
+    console.log(`${chalk.blue("Output: ")}${highlightCode(final)}`)
     updateState(completion, messages)
     break
     
