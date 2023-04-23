@@ -147,7 +147,7 @@ async function agentCycle(inputString: string, model = "gpt-3.5-turbo", temperat
   const [choice, arg] = parseAction(respMessage)
   
   if(choice.toLowerCase() == "finish") {
-    const final = ((arg.startsWith(`"`) && arg.endsWith(`"`)) ? arg.slice(1, -1) : arg).replace(/\\n/g, '\n')
+    const final = ((arg.startsWith(`"`) && arg.endsWith(`"`)) ? arg.slice(1, -1) : arg).replace(/\\n/g, '\n') // remove quotes and unescape
     console.log(`${chalk.blue("Output: ")}${highlightCode(final)}`)
     updateState(completion, messages)
     break
